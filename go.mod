@@ -10,7 +10,6 @@ require (
 	github.com/nickwells/fileparse.mod v1.1.9
 	github.com/nickwells/location.mod v1.2.5
 	github.com/nickwells/macros.mod v1.0.2
-	github.com/nickwells/param.mod/v3 v3.6.0
 	github.com/nickwells/param.mod/v4 v4.1.0
 	github.com/nickwells/verbose.mod v1.0.6
 	golang.org/x/crypto v0.0.0-20200323165209-0ec3e9974c59 // indirect
