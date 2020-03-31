@@ -6,29 +6,27 @@ import (
 
 	"github.com/nickwells/check.mod/check"
 	"github.com/nickwells/dbtcommon.mod/dbtcommon"
-	"github.com/nickwells/param.mod/v3/param"
-	"github.com/nickwells/param.mod/v3/param/paction"
-	"github.com/nickwells/param.mod/v3/param/psetter"
+	"github.com/nickwells/param.mod/v4/param"
+	"github.com/nickwells/param.mod/v4/param/paction"
+	"github.com/nickwells/param.mod/v4/param/psetter"
 )
 
 func addParams(ps *param.PSet) error {
 	var schemaObjParamCounter paction.Counter
 	af := (&schemaObjParamCounter).MakeActionFunc()
 
-	dbtcommon.AddParamDBName(ps,
-		param.Attrs(param.MustBeSet))
-	ps.AddFinalCheck(checkDBDirExists)
-
+	dbtcommon.AddParamDBName(ps, param.Attrs(param.MustBeSet))
+	ps.AddFinalCheck(checkDBSchemaExists)
 	dbtcommon.AddParamPsqlPath(ps)
 
 	ps.Add("schema", psetter.String{Value: &schemaName},
 		"this gives the name of the schema that is to be applied to the"+
 			" database. The name refers to the name of a schema under "+
-			dbtcommon.DbtSchemaBaseDirName("<db-name>")+
+			dbtcommon.DBSchemaDirName+
 			". This directory should contain the tables, triggers,"+
 			" functions and types (in subdirectories of the same names)",
 		param.Attrs(param.MustBeSet))
-	ps.AddFinalCheck(checkSchemaExists)
+	ps.AddFinalCheck(checkDBSchemaExists)
 
 	ps.Add("macro-dirs",
 		psetter.StrList{
@@ -56,7 +54,8 @@ func addParams(ps *param.PSet) error {
 			},
 		},
 		"this gives the list of types to be applied to the schema",
-		param.PostAction(af))
+		param.PostAction(af),
+		param.AltName("type"))
 
 	ps.Add("tables",
 		psetter.StrList{
@@ -68,7 +67,9 @@ func addParams(ps *param.PSet) error {
 			},
 		},
 		"this gives the list of tables to be applied to the schema",
-		param.PostAction(af))
+		param.PostAction(af),
+		param.AltName("table"),
+		param.AltName("tbl"))
 
 	ps.Add("funcs",
 		psetter.StrList{
@@ -80,7 +81,8 @@ func addParams(ps *param.PSet) error {
 			},
 		},
 		"this gives the list of funcs to be applied to the schema",
-		param.PostAction(af))
+		param.PostAction(af),
+		param.AltName("func"))
 
 	ps.Add("triggers",
 		psetter.StrList{
@@ -92,10 +94,16 @@ func addParams(ps *param.PSet) error {
 			},
 		},
 		"this gives the list of triggers to be applied to the schema",
-		param.PostAction(af))
+		param.PostAction(af),
+		param.AltName("trigger"))
 
 	ps.Add("create-audit-tables", psetter.Bool{Value: &createAuditTables},
 		"this will create audit tables for every table created")
+
+	ps.Add("display-sql-only", psetter.Bool{Value: &displayOnly},
+		"this will just print out the sql that would be applied"+
+			" without changing the database",
+		param.AltName("debug"))
 
 	ps.AddFinalCheck(func() error {
 		if schemaObjParamCounter.Count() == 0 {

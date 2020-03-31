@@ -4,9 +4,9 @@ import (
 	"fmt"
 
 	"github.com/nickwells/dbtcommon.mod/dbtcommon"
-	"github.com/nickwells/param.mod/v3/param"
-	"github.com/nickwells/param.mod/v3/param/paction"
-	"github.com/nickwells/param.mod/v3/param/psetter"
+	"github.com/nickwells/param.mod/v4/param"
+	"github.com/nickwells/param.mod/v4/param/paction"
+	"github.com/nickwells/param.mod/v4/param/psetter"
 )
 
 const (

@@ -6,8 +6,8 @@ import (
 	"os"
 
 	"github.com/nickwells/dbtcommon.mod/dbtcommon"
-	"github.com/nickwells/param.mod/v3/param"
-	"github.com/nickwells/param.mod/v3/param/paramset"
+	"github.com/nickwells/param.mod/v4/param"
+	"github.com/nickwells/param.mod/v4/param/paramset"
 	"github.com/nickwells/verbose.mod/verbose"
 )
 
@@ -27,7 +27,7 @@ func main() {
 
 	verbose.Println("base dir: " + dbtcommon.BaseDirName)
 	for _, schemaName := range schemaNames {
-		verbose.Println("dbName: " + dbtcommon.DbName + " schema: " + schemaName)
+		verbose.Println("db.schema: " + dbtcommon.DbName + "." + schemaName)
 		if dbtcommon.CheckDirs(dbtcommon.DbName, schemaName) {
 			verbose.Println("All required directories are already present")
 		} else {

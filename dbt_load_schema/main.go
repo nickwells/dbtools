@@ -14,8 +14,8 @@ import (
 	"github.com/nickwells/filecheck.mod/filecheck"
 	"github.com/nickwells/location.mod/location"
 	"github.com/nickwells/macros.mod/macros"
-	"github.com/nickwells/param.mod/v3/param"
-	"github.com/nickwells/param.mod/v3/param/paramset"
+	"github.com/nickwells/param.mod/v4/param"
+	"github.com/nickwells/param.mod/v4/param/paramset"
 	"github.com/nickwells/verbose.mod/verbose"
 )
 
@@ -27,12 +27,13 @@ var schemaTables []string
 var schemaFuncs []string
 var schemaTriggers []string
 var createAuditTables bool
+var displayOnly bool
 
 var macroDirs = make([]string, 0, 1)
 
-// checkSchemaExists checks that the given schema directory exists in the
-// base schema directory
-func checkSchemaExists() error {
+// checkDBSchemaExists checks that the given database / schema directory
+// exists in the DBS base directory
+func checkDBSchemaExists() error {
 	if dbtcommon.BaseDirName == "" ||
 		dbtcommon.DbName == "" ||
 		schemaName == "" {
@@ -43,23 +44,7 @@ func checkSchemaExists() error {
 		Checks:    []check.FileInfo{check.FileInfoIsDir},
 		Existence: filecheck.MustExist,
 	}
-	dirName := dbtcommon.DbtSchemaDirName(dbtcommon.DbName, schemaName)
-	return es.StatusCheck(dirName)
-}
-
-// checkDBDirExists checks that the given database directory exists in the
-// base directory
-func checkDBDirExists() error {
-	if dbtcommon.BaseDirName == "" ||
-		dbtcommon.DbName == "" {
-		return nil
-	}
-
-	es := filecheck.Provisos{
-		Checks:    []check.FileInfo{check.FileInfoIsDir},
-		Existence: filecheck.MustExist,
-	}
-	dirName := dbtcommon.DbtDBDirName(dbtcommon.DbName)
+	dirName := dbtcommon.DbtDirDBSchema(dbtcommon.DbName, schemaName)
 	return es.StatusCheck(dirName)
 }
 
@@ -70,8 +55,8 @@ func init() {
 	schemaTriggers = make([]string, 0)
 }
 
-// makeFileList converts the slice of names into a slice of file names
-// that exist in the schema directory under dirName. If any of the files does
+// makeFileList converts the slice of names into a slice of file names that
+// exist in the DB.schema directory under dirName. If any of the files does
 // not exist then the error is returned in the errs slice
 func makeFileList(names []string, dirName string, errs *[]error) []string {
 	fileList := make([]string, 0)
@@ -79,7 +64,7 @@ func makeFileList(names []string, dirName string, errs *[]error) []string {
 		return fileList
 	}
 
-	sdName := filepath.Join(dbtcommon.DbtSchemaDirName(dbtcommon.DbName,
+	sdName := filepath.Join(dbtcommon.DbtDirDBSchema(dbtcommon.DbName,
 		schemaName),
 		dirName)
 
@@ -106,7 +91,8 @@ func makeFileList(names []string, dirName string, errs *[]error) []string {
 
 // applyFile applies the file to the schema
 func applyFile(f string, c *macros.Cache) error {
-	verbose.Println("applying schema file: ", f)
+	verbose.Println("applying schema file: ",
+		strings.Replace(f, dbtcommon.BaseDirName, "[base-dir]", 1))
 	buf, err := translateFile(f, c)
 	if err != nil {
 		return err
@@ -135,8 +121,6 @@ func translateFile(f string, c *macros.Cache) (*bytes.Buffer, error) {
 		}
 		_, _ = (buf).WriteString(line)
 		_, _ = (buf).WriteString("\n") // add the newline stripped by Scan
-
-		verbose.Println(line)
 	}
 	err = scanner.Err()
 	if err != nil {
@@ -147,6 +131,11 @@ func translateFile(f string, c *macros.Cache) (*bytes.Buffer, error) {
 
 // applyBuffer writes the passed buffer to the sql command
 func applyBuffer(buf *bytes.Buffer) error {
+	if displayOnly {
+		fmt.Println(buf.String())
+		return nil
+	}
+
 	cmd := dbtcommon.SqlCommand("-")
 
 	cmdIn, err := cmd.StdinPipe()
@@ -209,7 +198,7 @@ func generateAuditTables() {
 // makeMacroCache constructs the macro cache. It adds the default macro
 // directory to the list of directories first.
 func makeMacroCache() *macros.Cache {
-	macroDirs = append(macroDirs, dbtcommon.DbtMacroDirName())
+	macroDirs = append(macroDirs, dbtcommon.DbtDirMacros())
 
 	macroCache, err := macros.NewCache(
 		macros.Dirs(macroDirs...),

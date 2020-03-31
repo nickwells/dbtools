@@ -8,9 +8,10 @@ import (
 	"os/exec"
 	"strings"
 
+	"github.com/nickwells/cli.mod/cli/responder"
 	"github.com/nickwells/dbtcommon.mod/dbtcommon"
-	"github.com/nickwells/param.mod/v3/param"
-	"github.com/nickwells/param.mod/v3/param/paramset"
+	"github.com/nickwells/param.mod/v4/param"
+	"github.com/nickwells/param.mod/v4/param/paramset"
 )
 
 // Created: Wed Apr 12 21:29:46 2017
@@ -97,7 +98,7 @@ func showReadMe(rel string) {
 		return
 	}
 
-	printFile(dbtcommon.DbtReleaseReadMeFile(rel),
+	printFile(dbtcommon.DbtFileReleaseReadMe(rel),
 		"Note", "========================================\n")
 }
 
@@ -108,28 +109,19 @@ func showWarning(rel string) {
 		return
 	}
 
-	if printFile(dbtcommon.DbtReleaseWarningFile(rel),
+	r := responder.NewOrPanic(
+		"Do you want to continue",
+		map[rune]string{
+			'y': "apply the changes",
+			'n': "abort the changes",
+		},
+		responder.SetMaxReprompts(5))
+
+	if printFile(dbtcommon.DbtFileReleaseWarning(rel),
 		"Warning", "#################################################\n") {
-		var count int
-		var response string
-		for count < 5 {
-			fmt.Print("Do you want to continue? (Y/N): ")
-
-			_, err := fmt.Scanln(&response)
-			if err != nil {
-				fmt.Println(errorPrefix, err)
-				break
-			}
-
-			if response == "Y" || response == "y" {
-				return
-			}
-			if response == "N" || response == "n" {
-				os.Exit(1)
-			}
-			count++
+		if r.GetResponseOrDie() == 'y' {
+			return
 		}
-		fmt.Println(errorPrefix, "too many invalid responses, aborting")
 		os.Exit(1)
 	}
 }
@@ -161,7 +153,7 @@ func checkReleaseDir() {
 // standard SQL command directly. Otherwise the file is executed as a
 // command itself. It reports any errors
 func applyRelease(fileList []string) error {
-	sqlPrefix := dbtcommon.DbtReleaseSQLDirName(releaseName)
+	sqlPrefix := dbtcommon.DbtDirReleaseSQL(releaseName)
 
 	var cmd *exec.Cmd
 
