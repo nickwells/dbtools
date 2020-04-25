@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	"github.com/nickwells/cli.mod/cli/responder"
-	"github.com/nickwells/dbtcommon.mod/dbtcommon"
+	"github.com/nickwells/dbtcommon.mod/v2/dbtcommon"
 	"github.com/nickwells/param.mod/v4/param"
 	"github.com/nickwells/param.mod/v4/param/paramset"
 )
@@ -162,7 +162,7 @@ func applyRelease(fileList []string) error {
 			fmt.Println("running:", f)
 		}
 		if strings.HasPrefix(f, sqlPrefix) {
-			cmd = dbtcommon.SqlCommand(f)
+			cmd = dbtcommon.SQLCommand(f)
 		} else {
 			cmd = exec.Command(f)
 		}

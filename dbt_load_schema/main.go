@@ -10,7 +10,7 @@ import (
 	"strings"
 
 	"github.com/nickwells/check.mod/check"
-	"github.com/nickwells/dbtcommon.mod/dbtcommon"
+	"github.com/nickwells/dbtcommon.mod/v2/dbtcommon"
 	"github.com/nickwells/filecheck.mod/filecheck"
 	"github.com/nickwells/location.mod/location"
 	"github.com/nickwells/macros.mod/macros"
@@ -136,7 +136,7 @@ func applyBuffer(buf *bytes.Buffer) error {
 		return nil
 	}
 
-	cmd := dbtcommon.SqlCommand("-")
+	cmd := dbtcommon.SQLCommand("-")
 
 	cmdIn, err := cmd.StdinPipe()
 	if err != nil {

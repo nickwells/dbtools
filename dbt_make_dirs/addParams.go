@@ -5,7 +5,7 @@ import (
 	"regexp"
 
 	"github.com/nickwells/check.mod/check"
-	"github.com/nickwells/dbtcommon.mod/dbtcommon"
+	"github.com/nickwells/dbtcommon.mod/v2/dbtcommon"
 	"github.com/nickwells/param.mod/v4/param"
 	"github.com/nickwells/param.mod/v4/param/psetter"
 )
@@ -17,10 +17,6 @@ var schemaNames = make([]string, 0)
 
 func addParams(ps *param.PSet) error {
 	dbtcommon.AddParamDBName(ps)
-	err := dbtcommon.SetGroupConfigFile_pkg_dbtcommon(ps)
-	if err != nil {
-		return err
-	}
 
 	ps.Add("only-check", psetter.Bool{Value: &onlyCheck},
 		"only check if the directories are present - don't create them."+

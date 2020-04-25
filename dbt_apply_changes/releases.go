@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 	"sort"
 
-	"github.com/nickwells/dbtcommon.mod/dbtcommon"
+	"github.com/nickwells/dbtcommon.mod/v2/dbtcommon"
 	"github.com/nickwells/fileparse.mod/fileparse"
 	"github.com/nickwells/location.mod/location"
 )
