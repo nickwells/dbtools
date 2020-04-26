@@ -1,15 +1,9 @@
-github.com/nickwells/check.mod v1.5.1 h1:M66/kOHIO1rjuveFP+8bPVsKlciASGt7ff9kW5YhJNQ=
-github.com/nickwells/check.mod v1.5.1/go.mod h1:1p8e8tcVVLJznByh2HiP6CINFBtXYRW1wwoK7sSTrIo=
 github.com/nickwells/check.mod v1.6.0 h1:LOBi2LAwbOCnZ4Nd68ufVyds2+5n3BsuNQzSCcQxkGk=
 github.com/nickwells/check.mod v1.6.0/go.mod h1:1p8e8tcVVLJznByh2HiP6CINFBtXYRW1wwoK7sSTrIo=
 github.com/nickwells/cli.mod v1.0.3 h1:YTqA7/x20NxwTsUhsratHFXSe21CxDiokm464LebCpg=
 github.com/nickwells/cli.mod v1.0.3/go.mod h1:JLdVGy5HuvsZLPr6qHS3NdgiLy/ZTONZJgwGsHDSQng=
-github.com/nickwells/dbtcommon.mod v1.1.0 h1:LH4qSQZQcvXa1QD6b0mVK4nEdOOowdNtho8kP3WDIe8=
-github.com/nickwells/dbtcommon.mod v1.1.0/go.mod h1:hTBLMcmDVBqovOiOOp9fIL43aadT31JWdQWHzfRWRJ0=
 github.com/nickwells/dbtcommon.mod/v2 v2.0.0 h1:NXg0sNhb19awcFtMuwjaX5ZAz02axVqAET4nP4KGNyU=
 github.com/nickwells/dbtcommon.mod/v2 v2.0.0/go.mod h1:CQ0qXji7ig1WuFytfsTqkRGcVa1b1dl29DjCGwybdps=
-github.com/nickwells/filecheck.mod v1.0.11 h1:eatpYWlnOskdtqWmejbt/JlpV/53XkrBO5a+pPXfGhY=
-github.com/nickwells/filecheck.mod v1.0.11/go.mod h1:zrwFYIX5AzsYpNgvidCDeOp2BD0Wbm1iag7yaACf0J8=
 github.com/nickwells/filecheck.mod v1.0.13 h1:y+5KxOVbNiXv/KM+sk6yuvGALGEGFRxGyn97QC3TSVc=
 github.com/nickwells/filecheck.mod v1.0.13/go.mod h1:rJh5fsU8ZuDVHb4wapMPXazvgDi3oK9Zfe9fnZJ73D4=
 github.com/nickwells/fileparse.mod v1.1.9 h1:s9GVb0U9UeKGvc8N39a5k/2rvBkBWkqfzIazJ9xHu9o=
@@ -20,8 +14,6 @@ github.com/nickwells/macros.mod v1.0.3 h1:pjqwJlW5c6czCybkx7Lr7wVdT8jo2MExS6ehZy
 github.com/nickwells/macros.mod v1.0.3/go.mod h1:0X4mN/GV/2zp010mRqomMdDjd8ut764iotJs+YMTWKo=
 github.com/nickwells/mathutil.mod v1.0.7 h1:YW3Vn6uqejOx0osF7Pz9m+8D02U9hAhqGUFhu4W5Qbs=
 github.com/nickwells/mathutil.mod v1.0.7/go.mod h1:t56fow8a/DB4Lkx0kkXrvlHJhDgH7f4zYsgB8P8u48Q=
-github.com/nickwells/param.mod/v4 v4.1.0 h1:MY4mIyQeQlpuesKRKzq4wlcqO9bIQtgQSjrI7vSDwms=
-github.com/nickwells/param.mod/v4 v4.1.0/go.mod h1:fRCF6DsSo/l6vAHfV6V3sTbhzRmRKR7xTfUZPX8vL3Y=
 github.com/nickwells/param.mod/v4 v4.1.2 h1:pJ7ArYNTAyE95rOl7IsoYwm2d9+CDzv2pWfSD8oHOdk=
 github.com/nickwells/param.mod/v4 v4.1.2/go.mod h1:Pn0oGBnlxs6ok4EDTGqk1wM85Wx1xUCff7dw4FJB02E=
 github.com/nickwells/strdist.mod v1.0.10 h1:mzZcl/hSCOSZ3N5/pGyRZ/rrBUvb9164osucA3X8Lgs=
