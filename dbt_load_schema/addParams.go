@@ -6,9 +6,9 @@ import (
 
 	"github.com/nickwells/check.mod/check"
 	"github.com/nickwells/dbtcommon.mod/v2/dbtcommon"
-	"github.com/nickwells/param.mod/v4/param"
-	"github.com/nickwells/param.mod/v4/param/paction"
-	"github.com/nickwells/param.mod/v4/param/psetter"
+	"github.com/nickwells/param.mod/v5/param"
+	"github.com/nickwells/param.mod/v5/param/paction"
+	"github.com/nickwells/param.mod/v5/param/psetter"
 )
 
 func addParams(ps *param.PSet) error {
