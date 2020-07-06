@@ -9,7 +9,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/nickwells/check.mod/check"
 	"github.com/nickwells/dbtcommon.mod/v2/dbtcommon"
 	"github.com/nickwells/filecheck.mod/filecheck"
 	"github.com/nickwells/location.mod/location"
@@ -40,10 +39,7 @@ func checkDBSchemaExists() error {
 		return nil
 	}
 
-	es := filecheck.Provisos{
-		Checks:    []check.FileInfo{check.FileInfoIsDir},
-		Existence: filecheck.MustExist,
-	}
+	es := filecheck.DirExists()
 	dirName := dbtcommon.DbtDirDBSchema(dbtcommon.DbName, schemaName)
 	return es.StatusCheck(dirName)
 }
@@ -68,10 +64,7 @@ func makeFileList(names []string, dirName string, errs *[]error) []string {
 		schemaName),
 		dirName)
 
-	es := filecheck.Provisos{
-		Checks:    []check.FileInfo{check.FileInfoIsRegular},
-		Existence: filecheck.MustExist,
-	}
+	es := filecheck.FileExists()
 
 	for _, name := range names {
 		if !strings.HasSuffix(name, ".sql") {
