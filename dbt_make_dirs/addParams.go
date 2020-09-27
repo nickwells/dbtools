@@ -1,5 +1,6 @@
-// dbt_make_dirs
 package main
+
+// dbt_make_dirs
 
 import (
 	"regexp"

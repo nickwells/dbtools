@@ -1,5 +1,6 @@
-// dbt_load_schema
 package main
+
+// dbt_load_schema
 
 import (
 	"bufio"

@@ -1,5 +1,6 @@
-// dbt_apply_changes
 package main
+
+// dbt_apply_changes
 
 import (
 	"bufio"
