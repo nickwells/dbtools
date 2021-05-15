@@ -22,12 +22,18 @@ import (
 // Created: Thu Apr 20 22:39:40 2017
 
 var schemaName string
-var schemaTypes []string
-var schemaTables []string
-var schemaFuncs []string
-var schemaTriggers []string
-var createAuditTables bool
-var displayOnly bool
+
+var (
+	schemaTypes    []string
+	schemaTables   []string
+	schemaFuncs    []string
+	schemaTriggers []string
+)
+
+var (
+	createAuditTables bool
+	displayOnly       bool
+)
 
 var macroDirs = make([]string, 0, 1)
 
@@ -102,7 +108,7 @@ func translateFile(f string, c *macros.Cache) (*bytes.Buffer, error) {
 		return nil, err
 	}
 	defer sqlFile.Close()
-	var buf = &bytes.Buffer{}
+	buf := &bytes.Buffer{}
 
 	_, _ = (buf).WriteString("SET search_path TO " + schemaName + ";\n")
 	scanner := bufio.NewScanner(sqlFile)
@@ -172,7 +178,7 @@ func generateAuditTables() {
 
 	for _, t := range schemaTables {
 		tAud := t + "_aud"
-		var buf = &bytes.Buffer{}
+		buf := &bytes.Buffer{}
 
 		_, _ = (buf).WriteString("SET search_path TO " + schemaName + ";\n")
 		_, _ = (buf).WriteString(
@@ -215,7 +221,7 @@ func main() {
 
 	macroCache := makeMacroCache()
 
-	var errs = make([]error, 0)
+	errs := make([]error, 0)
 	typeFiles := makeFileList(schemaTypes,
 		dbtcommon.SchemaSubDirTypes, &errs)
 	tableFiles := makeFileList(schemaTables,
@@ -237,5 +243,4 @@ func main() {
 	generateAuditTables()
 	applyAllFiles(funcFiles, "func", macroCache)
 	applyAllFiles(triggerFiles, "trigger", macroCache)
-
 }

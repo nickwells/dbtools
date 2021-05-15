@@ -14,6 +14,7 @@ import (
 // Created: Sat Apr  8 15:49:28 2017
 
 var onlyCheck bool
+
 var schemaNames = make([]string, 0)
 
 func addParams(ps *param.PSet) error {

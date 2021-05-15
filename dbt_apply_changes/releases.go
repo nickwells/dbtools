@@ -14,13 +14,11 @@ import (
 // findReleases finds all the non-archived releases in the release directory
 func findReleases() ([]string, error) {
 	dir, err := os.Open(dbtcommon.DbtDirReleaseBase())
-
 	if err != nil {
 		return nil, err
 	}
 
 	contents, err := dir.Readdir(-1)
-
 	if err != nil {
 		return nil, err
 	}
@@ -31,7 +29,7 @@ func findReleases() ([]string, error) {
 		dbtcommon.ReleaseArchiveDirName: true,
 	}
 
-	var relDirs = make([]string, 0)
+	relDirs := make([]string, 0)
 	for _, entry := range contents {
 		if ignoreEntry[entry.Name()] || !entry.IsDir() {
 			continue
@@ -52,6 +50,7 @@ type manifestFileParser struct {
 // (mfp *manifestFileParser) ParseLine parses a line from the manifest file
 func (mfp *manifestFileParser) ParseLine(line string, loc *location.L) error {
 	file := filepath.Join(mfp.releaseDir, line)
+
 	fStat, err := os.Stat(file)
 	if err != nil {
 		if os.IsNotExist(err) {
@@ -141,13 +140,11 @@ func checkForUnusedFiles(rel string, manifestMap map[string]location.L) []error 
 
 	relDir := dbtcommon.DbtDirRelease(rel)
 	dir, err := os.Open(relDir)
-
 	if err != nil {
 		return append(errors, err)
 	}
 
 	contents, err := dir.Readdir(-1)
-
 	if err != nil {
 		return append(errors, err)
 	}

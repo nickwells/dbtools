@@ -17,9 +17,11 @@ import (
 
 // Created: Wed Apr 12 21:29:46 2017
 
-var quiet bool
-var noWarn bool
-var showReleasesFlag bool
+var (
+	quiet            bool
+	noWarn           bool
+	showReleasesFlag bool
+)
 
 var releaseName string
 
