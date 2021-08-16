@@ -17,6 +17,14 @@ import (
 
 // Created: Wed Apr 12 21:29:46 2017
 
+type action int
+
+const (
+	doNothing action = iota
+	confirm
+	abort
+)
+
 var (
 	quiet            bool
 	noWarn           bool
@@ -47,52 +55,65 @@ func printFileHeader(title, sep string) {
 	fmt.Print(sep)
 }
 
+// printAlert prints a message with a surrounding alert box
+func printAlert(msg string) action {
+	box := strings.Repeat("*", 40)
+
+	fmt.Println(box)
+	fmt.Println("* " + errorPrefix)
+	fmt.Println("* " + msg)
+	fmt.Println(box)
+
+	return abort
+}
+
 // printFile prints the file if it exists and is not empty and returns a
 // boolean to indicate whether anything was printed
-func printFile(fileName, title, sep string) bool {
+func printFile(fileName, title, sep string) action {
+	nextAction := doNothing
+
 	fStat, err := os.Stat(fileName)
 	if err != nil {
 		if os.IsNotExist(err) {
-			return false
+			return nextAction
 		}
-		fmt.Printf("Couldn't open the %s file: %s", fileName, err)
-		os.Exit(1)
+		return printAlert(
+			fmt.Sprintf("Couldn't open the file: %q: %s", fileName, err))
 	}
 
 	if fStat.Mode()&os.ModeType != 0 {
-		fmt.Printf("%q exists but it is not a regular file", fileName)
-		os.Exit(1)
+		return printAlert(
+			fmt.Sprintf("%q exists but it is not a regular file",
+				fileName))
 	}
 
 	fd, err := os.Open(fileName)
 	if err != nil {
-		fmt.Printf("Couldn't open %s: %s\n", fileName, err)
-		os.Exit(1)
+		return printAlert(
+			fmt.Sprintf("Couldn't open %q: %s\n", fileName, err))
 	}
 	defer fd.Close()
 
-	headerPrinted := false
 	scanner := bufio.NewScanner(fd)
 	for scanner.Scan() {
-		if !headerPrinted {
+		if nextAction == doNothing {
 			printFileHeader(title, sep)
-			headerPrinted = true
+			nextAction = confirm
 		}
 		line := scanner.Text()
 		fmt.Println(line)
 	}
 	if err = scanner.Err(); err != nil {
-		fmt.Printf("%s While reading %s: %s\n", errorPrefix, fileName, err)
-		os.Exit(1)
+		return printAlert(
+			fmt.Sprintf("%s While reading %q: %s\n",
+				errorPrefix, fileName, err))
 	}
 
-	if headerPrinted {
+	if nextAction == confirm {
 		fmt.Print(sep)
 		fmt.Println()
-
-		return true
 	}
-	return false
+	return nextAction
 }
 
 // showReadMe prints the ReadMe file if any unless the quiet flag has been set
@@ -120,11 +141,14 @@ func showWarning(rel string) {
 		},
 		responder.SetMaxReprompts(5))
 
-	if printFile(dbtcommon.DbtFileReleaseWarning(rel),
+	switch printFile(dbtcommon.DbtFileReleaseWarning(rel),
 		"Warning", "#################################################\n") {
+	case confirm:
 		if r.GetResponseOrDie() == 'y' {
 			return
 		}
+		fallthrough
+	case abort:
 		os.Exit(1)
 	}
 }
