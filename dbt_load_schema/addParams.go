@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"regexp"
 
-	"github.com/nickwells/check.mod/check"
+	"github.com/nickwells/check.mod/v2/check"
 	"github.com/nickwells/dbtools/internal/dbtcommon"
 	"github.com/nickwells/param.mod/v5/param"
 	"github.com/nickwells/param.mod/v5/param/paction"
@@ -32,14 +32,14 @@ func addParams(ps *param.PSet) error {
 		psetter.StrList{
 			Value: &macroDirs,
 			Checks: []check.StringSlice{
-				check.StringSliceLenGT(0),
-				check.StringSliceNoDups,
+				check.SliceLength[[]string](check.ValGT(0)),
+				check.SliceHasNoDups[[]string, string],
 			},
 		},
 		"a list of additional directories in which macros may be found")
 
-	schemaObjCheck := check.StringSliceStringCheck(
-		check.StringMatchesPattern(
+	schemaObjCheck := check.SliceAll[[]string](
+		check.StringMatchesPattern[string](
 			regexp.MustCompile(`[a-z_][a-z0-9_]*`),
 			"a letter or underscore followed by 0 or more letters,"+
 				" digits or undescores"))
@@ -48,8 +48,8 @@ func addParams(ps *param.PSet) error {
 		psetter.StrList{
 			Value: &schemaTypes,
 			Checks: []check.StringSlice{
-				check.StringSliceLenGT(0),
-				check.StringSliceNoDups,
+				check.SliceLength[[]string](check.ValGT(0)),
+				check.SliceHasNoDups[[]string, string],
 				schemaObjCheck,
 			},
 		},
@@ -61,8 +61,8 @@ func addParams(ps *param.PSet) error {
 		psetter.StrList{
 			Value: &schemaTables,
 			Checks: []check.StringSlice{
-				check.StringSliceLenGT(0),
-				check.StringSliceNoDups,
+				check.SliceLength[[]string](check.ValGT(0)),
+				check.SliceHasNoDups[[]string, string],
 				schemaObjCheck,
 			},
 		},
@@ -74,8 +74,8 @@ func addParams(ps *param.PSet) error {
 		psetter.StrList{
 			Value: &schemaFuncs,
 			Checks: []check.StringSlice{
-				check.StringSliceLenGT(0),
-				check.StringSliceNoDups,
+				check.SliceLength[[]string](check.ValGT(0)),
+				check.SliceHasNoDups[[]string, string],
 				schemaObjCheck,
 			},
 		},
@@ -87,8 +87,8 @@ func addParams(ps *param.PSet) error {
 		psetter.StrList{
 			Value: &schemaTriggers,
 			Checks: []check.StringSlice{
-				check.StringSliceLenGT(0),
-				check.StringSliceNoDups,
+				check.SliceLength[[]string](check.ValGT(0)),
+				check.SliceHasNoDups[[]string, string],
 				schemaObjCheck,
 			},
 		},

@@ -5,7 +5,7 @@ package main
 import (
 	"regexp"
 
-	"github.com/nickwells/check.mod/check"
+	"github.com/nickwells/check.mod/v2/check"
 	"github.com/nickwells/dbtools/internal/dbtcommon"
 	"github.com/nickwells/param.mod/v5/param"
 	"github.com/nickwells/param.mod/v5/param/psetter"
@@ -29,14 +29,14 @@ func addParams(ps *param.PSet) error {
 		psetter.StrList{
 			Value: &schemaNames,
 			Checks: []check.StringSlice{
-				check.StringSliceStringCheck(
-					check.StringMatchesPattern(
+				check.SliceAll[[]string](
+					check.StringMatchesPattern[string](
 						regexp.MustCompile(`[a-z][a-z0-9_]*`),
 						"a schema name: a leading lowercase character"+
 							" followed by zero or more lowercase"+
 							" letters, digits or underscores")),
-				check.StringSliceLenGT(0),
-				check.StringSliceNoDups,
+				check.SliceLength[[]string](check.ValGT(0)),
+				check.SliceHasNoDups[[]string, string],
 			},
 		},
 		"a list of schemas to create the directories for",
