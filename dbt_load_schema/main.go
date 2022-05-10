@@ -10,7 +10,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/nickwells/dbtcommon.mod/v2/dbtcommon"
+	"github.com/nickwells/dbtools/internal/dbtcommon"
 	"github.com/nickwells/filecheck.mod/filecheck"
 	"github.com/nickwells/location.mod/location"
 	"github.com/nickwells/macros.mod/macros"

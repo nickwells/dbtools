@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/nickwells/dbtcommon.mod/v2/dbtcommon"
+	"github.com/nickwells/dbtools/internal/dbtcommon"
 	"github.com/nickwells/param.mod/v5/param"
 	"github.com/nickwells/param.mod/v5/param/paction"
 	"github.com/nickwells/param.mod/v5/param/psetter"

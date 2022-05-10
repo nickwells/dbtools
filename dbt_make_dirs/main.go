@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/nickwells/dbtcommon.mod/v2/dbtcommon"
+	"github.com/nickwells/dbtools/internal/dbtcommon"
 	"github.com/nickwells/param.mod/v5/param"
 	"github.com/nickwells/param.mod/v5/param/paramset"
 	"github.com/nickwells/verbose.mod/verbose"

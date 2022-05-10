@@ -6,7 +6,7 @@ import (
 	"regexp"
 
 	"github.com/nickwells/check.mod/check"
-	"github.com/nickwells/dbtcommon.mod/v2/dbtcommon"
+	"github.com/nickwells/dbtools/internal/dbtcommon"
 	"github.com/nickwells/param.mod/v5/param"
 	"github.com/nickwells/param.mod/v5/param/psetter"
 )
