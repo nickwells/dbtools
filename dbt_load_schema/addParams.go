@@ -55,7 +55,7 @@ func addParams(ps *param.PSet) error {
 		},
 		"this gives the list of types to be applied to the schema",
 		param.PostAction(af),
-		param.AltName("type"))
+		param.AltNames("type"))
 
 	ps.Add("tables",
 		psetter.StrList{
@@ -68,8 +68,7 @@ func addParams(ps *param.PSet) error {
 		},
 		"this gives the list of tables to be applied to the schema",
 		param.PostAction(af),
-		param.AltName("table"),
-		param.AltName("tbl"))
+		param.AltNames("table", "tbl"))
 
 	ps.Add("funcs",
 		psetter.StrList{
@@ -82,7 +81,7 @@ func addParams(ps *param.PSet) error {
 		},
 		"this gives the list of funcs to be applied to the schema",
 		param.PostAction(af),
-		param.AltName("func"))
+		param.AltNames("func"))
 
 	ps.Add("triggers",
 		psetter.StrList{
@@ -95,7 +94,7 @@ func addParams(ps *param.PSet) error {
 		},
 		"this gives the list of triggers to be applied to the schema",
 		param.PostAction(af),
-		param.AltName("trigger"))
+		param.AltNames("trigger"))
 
 	ps.Add("create-audit-tables", psetter.Bool{Value: &createAuditTables},
 		"this will create audit tables for every table created")
@@ -103,7 +102,7 @@ func addParams(ps *param.PSet) error {
 	ps.Add("display-sql-only", psetter.Bool{Value: &displayOnly},
 		"this will just print out the sql that would be applied"+
 			" without changing the database",
-		param.AltName("debug"))
+		param.AltNames("debug", "dbg"))
 
 	ps.AddFinalCheck(func() error {
 		if schemaObjParamCounter.Count() == 0 {

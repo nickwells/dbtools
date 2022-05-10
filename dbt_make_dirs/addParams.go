@@ -40,7 +40,7 @@ func addParams(ps *param.PSet) error {
 			},
 		},
 		"a list of schemas to create the directories for",
-		param.AltName("schemas"),
+		param.AltNames("schemas"),
 		param.Attrs(param.MustBeSet))
 
 	return nil

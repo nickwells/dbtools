@@ -35,8 +35,7 @@ func addParams(ps *param.PSet) error {
 			") and a sub-directory called "+
 			dbtcommon.ReleaseSQLDirName+
 			"containing SQL files",
-		param.AltName("rel"),
-		param.AltName("r"),
+		param.AltNames("rel", "r"),
 		param.PostAction(flagCounter.MakeActionFunc()))
 
 	ps.Add(pNameShowRelease, psetter.Bool{Value: &showReleasesFlag},
