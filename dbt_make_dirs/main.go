@@ -10,6 +10,7 @@ import (
 	"github.com/nickwells/param.mod/v5/param"
 	"github.com/nickwells/param.mod/v5/param/paramset"
 	"github.com/nickwells/verbose.mod/verbose"
+	"github.com/nickwells/versionparams.mod/versionparams"
 )
 
 // Created: Sat Apr  8 15:49:28 2017
@@ -18,6 +19,7 @@ func main() {
 	ps := paramset.NewOrDie(
 		addParams,
 		verbose.AddParams,
+		versionparams.AddParams,
 		dbtcommon.AddParams,
 		param.SetProgramDescription(
 			"this will create the database directories under"+

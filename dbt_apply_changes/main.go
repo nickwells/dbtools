@@ -13,6 +13,7 @@ import (
 	"github.com/nickwells/dbtools/internal/dbtcommon"
 	"github.com/nickwells/param.mod/v5/param"
 	"github.com/nickwells/param.mod/v5/param/paramset"
+	"github.com/nickwells/versionparams.mod/versionparams"
 )
 
 // Created: Wed Apr 12 21:29:46 2017
@@ -206,6 +207,7 @@ func applyRelease(fileList []string) error {
 func main() {
 	ps := paramset.NewOrDie(
 		addParams,
+		versionparams.AddParams,
 		dbtcommon.AddParams,
 		param.SetProgramDescription("this will apply a set of scripts"+
 			" (typically shell scripts but any executable can be run)."+
