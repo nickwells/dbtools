@@ -76,7 +76,7 @@ func AddParams(ps *param.PSet) error {
 // AddParamDBName adds the standard db parameter. Not all commands need this
 // and so it is not added in the AddParams function above
 func AddParamDBName(ps *param.PSet, opts ...param.OptFunc) {
-	opts = append(opts, param.AltName("db"),
+	opts = append(opts, param.AltNames("db"),
 		param.Attrs(param.MustBeSet))
 	ps.Add("db-name",
 		psetter.String{
