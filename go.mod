@@ -11,10 +11,12 @@ require (
 	github.com/nickwells/macros.mod v1.0.19
 	github.com/nickwells/param.mod/v5 v5.14.2
 	github.com/nickwells/verbose.mod v1.0.44
+	github.com/nickwells/versionparams.mod v1.0.28
 	github.com/nickwells/xdg.mod v1.0.5
 )
 
 require (
+	github.com/nickwells/col.mod/v3 v3.0.5 // indirect
 	github.com/nickwells/english.mod v1.0.16 // indirect
 	github.com/nickwells/errutil.mod v1.2.3 // indirect
 	github.com/nickwells/mathutil.mod/v2 v2.0.0 // indirect
