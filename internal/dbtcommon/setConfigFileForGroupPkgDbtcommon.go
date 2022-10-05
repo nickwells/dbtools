@@ -29,8 +29,8 @@ func setConfigFileForGroupPkgDbtcommon(ps *param.PSet) error {
 		filepath.Join(baseDir,
 			"github.com",
 			"nickwells",
-			"dbtcommon.mod",
-			"v2",
+			"dbtools",
+			"internal",
 			"dbtcommon",
 			"group-pkg.dbtcommon.cfg"),
 		filecheck.Optional)
@@ -58,8 +58,8 @@ func setGlobalConfigFileForGroupPkgDbtcommon(ps *param.PSet) error {
 		filepath.Join(baseDir,
 			"github.com",
 			"nickwells",
-			"dbtcommon.mod",
-			"v2",
+			"dbtools",
+			"internal",
 			"dbtcommon",
 			"group-pkg.dbtcommon.cfg"),
 		filecheck.Optional)
