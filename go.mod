@@ -11,7 +11,7 @@ require (
 	github.com/nickwells/macros.mod v1.0.22
 	github.com/nickwells/param.mod/v5 v5.15.3
 	github.com/nickwells/verbose.mod v1.0.48
-	github.com/nickwells/versionparams.mod v1.1.3
+	github.com/nickwells/versionparams.mod v1.1.4
 	github.com/nickwells/xdg.mod v1.0.9
 )
 
