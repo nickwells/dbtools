@@ -9,9 +9,9 @@ require (
 	github.com/nickwells/fileparse.mod v1.1.29
 	github.com/nickwells/location.mod v1.2.25
 	github.com/nickwells/macros.mod v1.0.25
-	github.com/nickwells/param.mod/v5 v5.15.9
-	github.com/nickwells/verbose.mod v1.0.54
-	github.com/nickwells/versionparams.mod v1.1.11
+	github.com/nickwells/param.mod/v5 v5.16.0
+	github.com/nickwells/verbose.mod v1.0.55
+	github.com/nickwells/versionparams.mod v1.1.12
 	github.com/nickwells/xdg.mod v1.0.9
 )
 
@@ -26,6 +26,6 @@ require (
 	github.com/nickwells/strdist.mod v1.1.9 // indirect
 	github.com/nickwells/twrap.mod v1.5.0 // indirect
 	golang.org/x/exp v0.0.0-20230321023759-10a507213a29 // indirect
-	golang.org/x/sys v0.6.0 // indirect
-	golang.org/x/term v0.6.0 // indirect
+	golang.org/x/sys v0.7.0 // indirect
+	golang.org/x/term v0.7.0 // indirect
 )
