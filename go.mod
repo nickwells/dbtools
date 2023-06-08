@@ -4,14 +4,14 @@ go 1.18
 
 require (
 	github.com/nickwells/check.mod/v2 v2.1.10
-	github.com/nickwells/cli.mod v1.0.43
+	github.com/nickwells/cli.mod v1.1.0
 	github.com/nickwells/filecheck.mod v1.1.20
 	github.com/nickwells/fileparse.mod v1.1.30
 	github.com/nickwells/location.mod v1.2.26
 	github.com/nickwells/macros.mod v1.0.26
-	github.com/nickwells/param.mod/v5 v5.16.2
-	github.com/nickwells/verbose.mod v1.0.57
-	github.com/nickwells/versionparams.mod v1.1.14
+	github.com/nickwells/param.mod/v5 v5.18.0
+	github.com/nickwells/verbose.mod v1.0.58
+	github.com/nickwells/versionparams.mod v1.1.15
 	github.com/nickwells/xdg.mod v1.0.9
 )
 
