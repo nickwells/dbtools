@@ -77,11 +77,11 @@ func addParams(prog *Prog) param.PSetOptFunc {
 				param.AltNames("type"), param.PostAction(countSchema),
 				param.PostAction(
 					func(_ location.L, _ *param.ByName, _ []string) error {
-						if prog.schemas[dbtcommon.SchemaSubDirTypes] == nil {
-							prog.schemas[dbtcommon.SchemaSubDirTypes] =
-								&schema{}
-						}
 						s := prog.schemas[dbtcommon.SchemaSubDirTypes]
+						if s == nil {
+							s = &schema{}
+							prog.schemas[dbtcommon.SchemaSubDirTypes] = s
+						}
 						s.names = append(s.names, names...)
 						if err := noDupsCheck(s.names); err != nil {
 							return fmt.Errorf("Duplicate types: %w", err)
@@ -105,11 +105,11 @@ func addParams(prog *Prog) param.PSetOptFunc {
 				param.PostAction(countSchema),
 				param.PostAction(
 					func(_ location.L, _ *param.ByName, _ []string) error {
-						if prog.schemas[dbtcommon.SchemaSubDirTables] == nil {
-							prog.schemas[dbtcommon.SchemaSubDirTables] =
-								&schema{}
-						}
 						s := prog.schemas[dbtcommon.SchemaSubDirTables]
+						if s == nil {
+							s = &schema{}
+							prog.schemas[dbtcommon.SchemaSubDirTables] = s
+						}
 						s.names = append(s.names, names...)
 						if err := noDupsCheck(s.names); err != nil {
 							return fmt.Errorf("Duplicate tables: %w", err)
@@ -133,11 +133,11 @@ func addParams(prog *Prog) param.PSetOptFunc {
 				param.PostAction(countSchema),
 				param.PostAction(
 					func(_ location.L, _ *param.ByName, _ []string) error {
-						if prog.schemas[dbtcommon.SchemaSubDirFuncs] == nil {
-							prog.schemas[dbtcommon.SchemaSubDirFuncs] =
-								&schema{}
-						}
 						s := prog.schemas[dbtcommon.SchemaSubDirFuncs]
+						if s == nil {
+							s = &schema{}
+							prog.schemas[dbtcommon.SchemaSubDirFuncs] = s
+						}
 						s.names = append(s.names, names...)
 						if err := noDupsCheck(s.names); err != nil {
 							return fmt.Errorf("Duplicate funcs: %w", err)
@@ -161,11 +161,11 @@ func addParams(prog *Prog) param.PSetOptFunc {
 				param.PostAction(countSchema),
 				param.PostAction(
 					func(_ location.L, _ *param.ByName, _ []string) error {
-						if prog.schemas[dbtcommon.SchemaSubDirTriggers] == nil {
-							prog.schemas[dbtcommon.SchemaSubDirTriggers] =
-								&schema{}
-						}
 						s := prog.schemas[dbtcommon.SchemaSubDirTriggers]
+						if s == nil {
+							s = &schema{}
+							prog.schemas[dbtcommon.SchemaSubDirTriggers] = s
+						}
 						s.names = append(s.names, names...)
 						if err := noDupsCheck(s.names); err != nil {
 							return fmt.Errorf("Duplicate triggers: %w", err)
