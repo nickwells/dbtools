@@ -11,37 +11,33 @@ import (
 	"github.com/nickwells/param.mod/v5/param/psetter"
 )
 
-// Created: Sat Apr  8 15:49:28 2017
+func addParams(prog *Prog) param.PSetOptFunc {
+	return func(ps *param.PSet) error {
+		dbtcommon.AddParamDBName(prog.dbp, ps)
 
-var onlyCheck bool
+		ps.Add("only-check", psetter.Bool{Value: &prog.onlyCheck},
+			"only check if the directories are present - don't create them."+
+				" If this is set then the exit status will be set to 1 if"+
+				" the directories are not all present and to zero otherwise")
 
-var schemaNames = make([]string, 0)
-
-func addParams(ps *param.PSet) error {
-	dbtcommon.AddParamDBName(ps)
-
-	ps.Add("only-check", psetter.Bool{Value: &onlyCheck},
-		"only check if the directories are present - don't create them."+
-			" If this is set then the exit status will be set to 1 if"+
-			" the directories are not all present and to zero otherwise")
-
-	ps.Add("schema-names",
-		psetter.StrList{
-			Value: &schemaNames,
-			Checks: []check.StringSlice{
-				check.SliceAll[[]string](
-					check.StringMatchesPattern[string](
-						regexp.MustCompile(`[a-z][a-z0-9_]*`),
-						"a schema name: a leading lowercase character"+
-							" followed by zero or more lowercase"+
-							" letters, digits or underscores")),
-				check.SliceLength[[]string](check.ValGT(0)),
-				check.SliceHasNoDups[[]string, string],
+		ps.Add("schema-names",
+			psetter.StrList{
+				Value: &prog.schemaNames,
+				Checks: []check.StringSlice{
+					check.SliceAll[[]string](
+						check.StringMatchesPattern[string](
+							regexp.MustCompile(`[a-z][a-z0-9_]*`),
+							"a schema name: a leading lowercase character"+
+								" followed by zero or more lowercase"+
+								" letters, digits or underscores")),
+					check.SliceLength[[]string](check.ValGT(0)),
+					check.SliceHasNoDups[[]string, string],
+				},
 			},
-		},
-		"a list of schemas to create the directories for",
-		param.AltNames("schemas"),
-		param.Attrs(param.MustBeSet))
+			"a list of schemas to create the directories for",
+			param.AltNames("schemas"),
+			param.Attrs(param.MustBeSet))
 
-	return nil
+		return nil
+	}
 }

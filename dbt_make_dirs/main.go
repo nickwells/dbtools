@@ -7,38 +7,45 @@ import (
 	"os"
 
 	"github.com/nickwells/dbtools/internal/dbtcommon"
-	"github.com/nickwells/param.mod/v5/param"
-	"github.com/nickwells/param.mod/v5/param/paramset"
 	"github.com/nickwells/verbose.mod/verbose"
-	"github.com/nickwells/versionparams.mod/versionparams"
 )
 
 // Created: Sat Apr  8 15:49:28 2017
 
+// Prog holds program parameter values etc.
+type Prog struct {
+	onlyCheck   bool
+	schemaNames []string
+	dbp         *dbtcommon.DBParams
+}
+
+// NewProg returns a new Prog value, correctly initialised
+func NewProg() *Prog {
+	return &Prog{
+		dbp: dbtcommon.NewDBParams(),
+	}
+}
+
 func main() {
-	ps := paramset.NewOrDie(
-		addParams,
-		verbose.AddParams,
-		versionparams.AddParams,
-		dbtcommon.AddParams,
-		param.SetProgramDescription(
-			"this will create the database directories under"+
-				" the base (project) directory"))
+	prog := NewProg()
+	ps := makeParamSet(prog)
 	ps.Parse()
 
 	var missingDirs bool
 
-	verbose.Println("base dir: " + dbtcommon.BaseDirName)
-	for _, schemaName := range schemaNames {
-		verbose.Println("db.schema: " + dbtcommon.DbName + "." + schemaName)
-		if dbtcommon.CheckDirs(dbtcommon.DbName, schemaName) {
+	verbose.Println("base dir: " + prog.dbp.BaseDirName)
+	for _, schemaName := range prog.schemaNames {
+		verbose.Println("db.schema: " + prog.dbp.DbName + "." + schemaName)
+		if dbtcommon.CheckDirs(
+			prog.dbp.BaseDirName, prog.dbp.DbName, schemaName) {
 			verbose.Println("All required directories are already present")
 		} else {
 			verbose.Println("Some directories are missing")
 			missingDirs = true
 
-			if !onlyCheck {
-				err := dbtcommon.MakeMissingDirs(dbtcommon.DbName, schemaName)
+			if !prog.onlyCheck {
+				err := dbtcommon.MakeMissingDirs(
+					prog.dbp.BaseDirName, prog.dbp.DbName, schemaName)
 				if err != nil {
 					fmt.Fprintf(os.Stderr,
 						"Couldn't create all the missing subdirectories: %s\n",
@@ -49,7 +56,7 @@ func main() {
 			}
 		}
 	}
-	if onlyCheck && missingDirs {
+	if prog.onlyCheck && missingDirs {
 		os.Exit(1)
 	}
 	os.Exit(0)

@@ -12,8 +12,8 @@ import (
 )
 
 // findReleases finds all the non-archived releases in the release directory
-func findReleases() ([]string, error) {
-	dir, err := os.Open(dbtcommon.DbtDirReleaseBase())
+func (prog *Prog) findReleases() ([]string, error) {
+	dir, err := os.Open(dbtcommon.DbtDirReleaseBase(prog.dbp.BaseDirName))
 	if err != nil {
 		return nil, err
 	}
@@ -81,10 +81,12 @@ func (mfp *manifestFileParser) ParseLine(line string, loc *location.L) error {
 // a list of the files in the order they appear in the Manifest file. The
 // files are checked to make sure they exist and an error is generated if
 // they don't. A duplicate entry is also an error
-func parseManifest(rel string) (map[string]location.L, []string, []error) {
-	manifest := dbtcommon.DbtFileReleaseManifest(rel)
-	relDir := dbtcommon.DbtDirRelease(rel)
-	errors := make([]error, 0)
+func (prog *Prog) parseManifest() []error {
+	manifest := dbtcommon.DbtFileReleaseManifest(
+		prog.dbp.BaseDirName, prog.releaseName)
+	relDir := dbtcommon.DbtDirRelease(
+		prog.dbp.BaseDirName, prog.releaseName)
+	var errors []error
 
 	mfStat, err := os.Stat(manifest)
 	if err != nil {
@@ -98,7 +100,7 @@ func parseManifest(rel string) (map[string]location.L, []string, []error) {
 						" should be applied",
 					relDir, dbtcommon.ReleaseManifestFileName))
 		}
-		return nil, nil, errors
+		return errors
 	}
 
 	if mfStat.Mode()&os.ModeType != 0 {
@@ -107,15 +109,12 @@ func parseManifest(rel string) (map[string]location.L, []string, []error) {
 				"The release directory (%s) contains %q but it is"+
 					" not a regular file",
 				relDir, dbtcommon.ReleaseManifestFileName))
-		return nil, nil, errors
+		return errors
 	}
 
-	manifestMap := make(map[string]location.L)
-	fileList := make([]string, 0)
-
 	mfp := manifestFileParser{
-		fileMap:    manifestMap,
-		fileList:   &fileList,
+		fileMap:    prog.manifestMap,
+		fileList:   &prog.fileList,
 		releaseDir: relDir,
 	}
 
@@ -124,21 +123,21 @@ func parseManifest(rel string) (map[string]location.L, []string, []error) {
 	fp.SetInclKeyWord("")
 	errors = append(errors, fp.Parse(manifest)...)
 
-	if len(fileList) == 0 {
+	if len(prog.fileList) == 0 {
 		errors = append(errors,
 			fmt.Errorf(
 				"the manifest is empty - all the lines are empty or comments"))
 	}
 
-	return manifestMap, fileList, errors
+	return errors
 }
 
 // checkForUnusedFiles checks that all the files in the release dir are
 // referenced in the manifest file
-func checkForUnusedFiles(rel string, manifestMap map[string]location.L) []error {
+func (prog *Prog) checkForUnusedFiles() []error {
 	errors := make([]error, 0)
 
-	relDir := dbtcommon.DbtDirRelease(rel)
+	relDir := dbtcommon.DbtDirRelease(prog.dbp.BaseDirName, prog.releaseName)
 	dir, err := os.Open(relDir)
 	if err != nil {
 		return append(errors, err)
@@ -162,7 +161,7 @@ func checkForUnusedFiles(rel string, manifestMap map[string]location.L) []error 
 		if ignoreEntry[entry.Name()] {
 			continue
 		}
-		if _, ok := manifestMap[entry.Name()]; !ok {
+		if _, ok := prog.manifestMap[entry.Name()]; !ok {
 			errors = append(errors,
 				fmt.Errorf("the release directory (%s) contains %q"+
 					" which is not in the Manifest file",
@@ -173,15 +172,16 @@ func checkForUnusedFiles(rel string, manifestMap map[string]location.L) []error 
 	return errors
 }
 
-// releaseDirExists checks that the release directory exists and returns an
+// releaseDirIsOK checks that the release directory exists and returns an
 // error if it does not
-func releaseDirExists(rel string) error {
-	if rel == dbtcommon.ReleaseArchiveDirName {
+func (prog *Prog) releaseDirIsOK() error {
+	if prog.releaseName == dbtcommon.ReleaseArchiveDirName {
 		return fmt.Errorf(
-			"the %s directory cannot be used as a release directory", rel)
+			"the %s directory cannot be used as a release directory",
+			prog.releaseName)
 	}
 
-	relDir := dbtcommon.DbtDirRelease(rel)
+	relDir := dbtcommon.DbtDirRelease(prog.dbp.BaseDirName, prog.releaseName)
 	rdStat, err := os.Stat(relDir)
 	if err != nil {
 		if os.IsNotExist(err) {

@@ -4,8 +4,8 @@ package main
 
 import (
 	"bufio"
-	"bytes"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -14,130 +14,113 @@ import (
 	"github.com/nickwells/filecheck.mod/filecheck"
 	"github.com/nickwells/location.mod/location"
 	"github.com/nickwells/macros.mod/macros"
-	"github.com/nickwells/param.mod/v5/param"
-	"github.com/nickwells/param.mod/v5/param/paramset"
 	"github.com/nickwells/verbose.mod/verbose"
-	"github.com/nickwells/versionparams.mod/versionparams"
 )
 
 // Created: Thu Apr 20 22:39:40 2017
 
-var schemaName string
-
-var (
-	schemaTypes    []string
-	schemaTables   []string
-	schemaFuncs    []string
-	schemaTriggers []string
+const (
+	dfltSchema = "public"
 )
-
-var (
-	createAuditTables bool
-	displayOnly       bool
-)
-
-var macroDirs = make([]string, 0, 1)
 
 // checkDBSchemaExists checks that the given database / schema directory
 // exists in the DBS base directory
-func checkDBSchemaExists() error {
-	if dbtcommon.BaseDirName == "" ||
-		dbtcommon.DbName == "" ||
-		schemaName == "" {
+func (prog *Prog) checkDBSchemaExists() error {
+	if prog.dbp.BaseDirName == "" ||
+		prog.dbp.DbName == "" ||
+		prog.schemaName == "" {
 		return nil
 	}
 
-	es := filecheck.DirExists()
-	dirName := dbtcommon.DbtDirDBSchema(dbtcommon.DbName, schemaName)
-	return es.StatusCheck(dirName)
+	exists := filecheck.DirExists()
+	dirName := dbtcommon.DbtDirDBSchema(
+		prog.dbp.BaseDirName, prog.dbp.DbName, prog.schemaName)
+	return exists.StatusCheck(dirName)
 }
 
-func init() {
-	schemaTypes = make([]string, 0)
-	schemaTables = make([]string, 0)
-	schemaFuncs = make([]string, 0)
-	schemaTriggers = make([]string, 0)
-}
-
-// makeFileList converts the slice of names into a slice of file names that
+// makeFileLists converts the slice of names into a slice of file names that
 // exist in the DB.schema directory under dirName. If any of the files does
 // not exist then the error is returned in the errs slice
-func makeFileList(names []string, dirName string, errs *[]error) []string {
-	fileList := make([]string, 0)
-	if len(names) == 0 {
-		return fileList
-	}
+func (prog *Prog) makeFileLists() {
+	errs := []error{}
 
-	sdName := filepath.Join(dbtcommon.DbtDirDBSchema(dbtcommon.DbName,
-		schemaName),
-		dirName)
+	for dirName, s := range prog.schemas {
+		sdName := filepath.Join(dbtcommon.DbtDirDBSchema(
+			prog.dbp.BaseDirName,
+			prog.dbp.DbName,
+			prog.schemaName),
+			dirName)
 
-	es := filecheck.FileExists()
+		existence := filecheck.FileExists()
 
-	for _, name := range names {
-		if !strings.HasSuffix(name, ".sql") {
-			name += ".sql"
+		for _, name := range s.names {
+			if !strings.HasSuffix(name, ".sql") {
+				name += ".sql"
+			}
+			name = filepath.Join(sdName, name)
+			err := existence.StatusCheck(name)
+			if err != nil {
+				errs = append(errs, err)
+			} else {
+				s.files = append(s.files, name)
+			}
 		}
-		name = filepath.Join(sdName, name)
-		err := es.StatusCheck(name)
-		if err != nil {
-			*errs = append(*errs, err)
-		} else {
-			fileList = append(fileList, name)
+
+		if len(errs) != 0 {
+			for _, err := range errs {
+				fmt.Fprintln(os.Stderr, err)
+			}
+			os.Exit(1)
 		}
 	}
-
-	return fileList
 }
 
 // applyFile applies the file to the schema
-func applyFile(f string, c *macros.Cache) error {
+func (prog *Prog) applyFile(f string) error {
 	verbose.Println("applying schema file: ",
-		strings.Replace(f, dbtcommon.BaseDirName, "[base-dir]", 1))
-	buf, err := translateFile(f, c)
+		strings.Replace(f, prog.dbp.BaseDirName, "[base-dir]", 1))
+	sql, err := prog.translateFile(f)
 	if err != nil {
 		return err
 	}
-	err = applyBuffer(buf)
+	err = prog.applySQL(sql)
 	return err
 }
 
 // translateFile reads the file applying any macros found
-func translateFile(f string, c *macros.Cache) (*bytes.Buffer, error) {
+func (prog *Prog) translateFile(f string) (string, error) {
 	sqlFile, err := os.Open(f)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 	defer sqlFile.Close()
-	buf := &bytes.Buffer{}
 
-	_, _ = (buf).WriteString("SET search_path TO " + schemaName + ";\n")
+	sql := "SET search_path TO " + prog.schemaName + ";\n"
 	scanner := bufio.NewScanner(sqlFile)
 	loc := location.New(f)
 	for scanner.Scan() {
 		loc.Incr()
-		line, err := c.Substitute(scanner.Text(), loc)
+		line, err := prog.macroCache.Substitute(scanner.Text(), loc)
 		if err != nil {
-			return nil, err
+			return "", err
 		}
-		_, _ = (buf).WriteString(line)
-		_, _ = (buf).WriteString("\n") // add the newline stripped by Scan
+		sql += line + "\n"
 	}
 	err = scanner.Err()
 	if err != nil {
-		return nil, err
+		return "", err
 	}
-	return buf, nil
+	return sql, nil
 }
 
-// applyBuffer writes the passed buffer to the sql command
-func applyBuffer(buf *bytes.Buffer) error {
-	if displayOnly {
-		fmt.Println(buf.String())
+// applySQL writes the passed buffer to the sql command
+func (prog *Prog) applySQL(sql string) error {
+	if prog.displayOnly {
+		fmt.Println(sql)
 		return nil
 	}
 
-	cmd := dbtcommon.SQLCommand("-")
+	cmd := dbtcommon.SQLCommand(prog.dbp, "-")
 
 	cmdIn, err := cmd.StdinPipe()
 	if err != nil {
@@ -146,7 +129,7 @@ func applyBuffer(buf *bytes.Buffer) error {
 
 	go func() {
 		defer cmdIn.Close()
-		(buf).WriteTo(cmdIn) //nolint: errcheck
+		_, _ = io.WriteString(cmdIn, sql)
 	}()
 
 	out, err := cmd.CombinedOutput()
@@ -157,92 +140,105 @@ func applyBuffer(buf *bytes.Buffer) error {
 	return err
 }
 
-// applyAllFiles applies the files from the schema directory to the
-// database. It exits on the first failure to apply a file.
-func applyAllFiles(files []string, typeName string, cache *macros.Cache) {
-	for _, f := range files {
-		err := applyFile(f, cache)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "Could not apply the schema %s file: %s\n",
-				typeName, f)
-			fmt.Fprintln(os.Stderr, err)
-			os.Exit(1)
-		}
+// generateAuditTable generates the audit table for the named table
+func (prog *Prog) generateAuditTable(tbl string) {
+	if !prog.createAuditTables {
+		return
+	}
+	auditTbl := tbl + "_aud"
+
+	sql := "SET search_path TO " + prog.schemaName + ";\n" +
+		"CREATE TABLE " + auditTbl + " AS SELECT * FROM " + tbl +
+		" WITH NO DATA;\n"
+	err := prog.applySQL(sql)
+	if err != nil {
+		fmt.Fprintf(os.Stderr,
+			"Could not generate the audit table (%s) for table %s\n",
+			auditTbl, tbl)
+		fmt.Fprintln(os.Stderr, "sql failed:\n", sql)
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
 	}
 }
 
-// generateAuditTables ...
-func generateAuditTables() {
-	if !createAuditTables {
-		return
-	}
+// applyAllFiles applies the files from the schema directories to the
+// database. It exits on the first failure to apply a file.
+func (prog *Prog) applyAllFiles() {
+	verbose.Println("applying files")
+	for schemaPart, s := range prog.schemas {
+		verbose.Println("\t", schemaPart)
+		for i, f := range s.files {
+			verbose.Println("\t\t", f)
+			err := prog.applyFile(f)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "Couldn't apply the schema %q file: %s\n",
+					schemaPart, f)
+				fmt.Fprintln(os.Stderr, err)
+				os.Exit(1)
+			}
 
-	for _, t := range schemaTables {
-		tAud := t + "_aud"
-		buf := &bytes.Buffer{}
-
-		_, _ = (buf).WriteString("SET search_path TO " + schemaName + ";\n")
-		_, _ = (buf).WriteString(
-			"CREATE TABLE " + tAud +
-				" AS SELECT * FROM " + t +
-				" WITH NO DATA;\n")
-		err := applyBuffer(buf)
-		if err != nil {
-			fmt.Fprintf(os.Stderr,
-				"Could not create the audit table for: %s\n", t)
-			fmt.Fprintln(os.Stderr, err)
-			os.Exit(1)
+			if schemaPart == dbtcommon.SchemaSubDirTables {
+				prog.generateAuditTable(s.names[i])
+			}
 		}
 	}
 }
 
 // makeMacroCache constructs the macro cache. It adds the default macro
 // directory to the list of directories first.
-func makeMacroCache() *macros.Cache {
-	macroDirs = append(macroDirs, dbtcommon.DbtDirMacros())
+func (prog *Prog) makeMacroCache() {
+	verbose.Println("construct the Macro cache")
+	prog.macroDirs = append(prog.macroDirs,
+		dbtcommon.DbtDirMacros(prog.dbp.BaseDirName))
 
-	macroCache, err := macros.NewCache(
-		macros.Dirs(macroDirs...),
+	mc, err := macros.NewCache(
+		macros.Dirs(prog.macroDirs...),
 		macros.Suffix(".sql"))
 	if err != nil {
 		fmt.Println("Couldn't construct the macro cache: ", err)
 		os.Exit(1)
 	}
+	prog.macroCache = mc
+}
 
-	return macroCache
+// schema holds the list of schema part names and their associated files
+type schema struct {
+	names []string
+	files []string
+}
+
+// Prog holds program parameters and status
+type Prog struct {
+	// parameters
+	schemaName string
+
+	createAuditTables bool
+	displayOnly       bool
+
+	schemas map[string]*schema
+	dbp     *dbtcommon.DBParams
+
+	macroDirs  []string
+	macroCache *macros.Cache
+}
+
+// NewProg returns a new Prog instance with the default values set
+func NewProg() *Prog {
+	return &Prog{
+		schemaName: dfltSchema,
+		schemas:    make(map[string]*schema),
+		dbp:        dbtcommon.NewDBParams(),
+	}
 }
 
 func main() {
-	ps := paramset.NewOrDie(
-		addParams,
-		verbose.AddParams,
-		versionparams.AddParams,
-		dbtcommon.AddParams,
-		param.SetProgramDescription("this will load the named schema files"))
+	prog := NewProg()
+	ps := makeParamSet(prog)
 	ps.Parse()
 
-	macroCache := makeMacroCache()
+	prog.makeMacroCache()
 
-	errs := make([]error, 0)
-	typeFiles := makeFileList(schemaTypes,
-		dbtcommon.SchemaSubDirTypes, &errs)
-	tableFiles := makeFileList(schemaTables,
-		dbtcommon.SchemaSubDirTables, &errs)
-	funcFiles := makeFileList(schemaFuncs,
-		dbtcommon.SchemaSubDirFuncs, &errs)
-	triggerFiles := makeFileList(schemaTriggers,
-		dbtcommon.SchemaSubDirTriggers, &errs)
+	prog.makeFileLists()
 
-	if len(errs) != 0 {
-		for _, err := range errs {
-			fmt.Fprintln(os.Stderr, err)
-		}
-		os.Exit(1)
-	}
-
-	applyAllFiles(typeFiles, "type", macroCache)
-	applyAllFiles(tableFiles, "table", macroCache)
-	generateAuditTables()
-	applyAllFiles(funcFiles, "func", macroCache)
-	applyAllFiles(triggerFiles, "trigger", macroCache)
+	prog.applyAllFiles()
 }

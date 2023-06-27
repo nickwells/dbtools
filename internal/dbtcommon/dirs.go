@@ -80,54 +80,54 @@ var schemaDirs = []DirSpec{
 }
 
 // DbtDirStart returns the name of the starting directory
-func DbtDirStart() string {
-	return filepath.Join(BaseDirName, DbtDirName)
+func DbtDirStart(basename string) string {
+	return filepath.Join(basename, DbtDirName)
 }
 
 // DbtDirMacros returns the fullname of the macros directory
-func DbtDirMacros() string {
-	return filepath.Join(DbtDirStart(), MacrosDirName)
+func DbtDirMacros(basename string) string {
+	return filepath.Join(DbtDirStart(basename), MacrosDirName)
 }
 
 // DbtDirDBSchemaBase returns the full base name of the DB.schema directories
-func DbtDirDBSchemaBase() string {
-	return filepath.Join(DbtDirStart(), DBSchemaDirName)
+func DbtDirDBSchemaBase(basename string) string {
+	return filepath.Join(DbtDirStart(basename), DBSchemaDirName)
 }
 
 // DbtDirDBSchema returns the full name of the directory for the given database
 // and schema
-func DbtDirDBSchema(dbName, schemaName string) string {
-	return filepath.Join(DbtDirDBSchemaBase(), dbName+"."+schemaName)
+func DbtDirDBSchema(basename, dbName, schemaName string) string {
+	return filepath.Join(DbtDirDBSchemaBase(basename), dbName+"."+schemaName)
 }
 
 // DbtDirReleaseBase returns the full name of the release scripts directory
-func DbtDirReleaseBase() string {
-	return filepath.Join(DbtDirStart(), ReleaseScriptsBaseName)
+func DbtDirReleaseBase(basename string) string {
+	return filepath.Join(DbtDirStart(basename), ReleaseScriptsBaseName)
 }
 
 // DbtDirRelease returns the full name of the release  directory
-func DbtDirRelease(rel string) string {
-	return filepath.Join(DbtDirReleaseBase(), rel)
+func DbtDirRelease(basename, rel string) string {
+	return filepath.Join(DbtDirReleaseBase(basename), rel)
 }
 
 // DbtDirReleaseSQL returns the full name of the release SQL.files directory
-func DbtDirReleaseSQL(rel string) string {
-	return filepath.Join(DbtDirReleaseBase(), rel, ReleaseSQLDirName)
+func DbtDirReleaseSQL(basename, rel string) string {
+	return filepath.Join(DbtDirReleaseBase(basename), rel, ReleaseSQLDirName)
 }
 
 // DbtFileReleaseManifest returns the full name of the release manifest file
-func DbtFileReleaseManifest(rel string) string {
-	return filepath.Join(DbtDirRelease(rel), ReleaseManifestFileName)
+func DbtFileReleaseManifest(basename, rel string) string {
+	return filepath.Join(DbtDirRelease(basename, rel), ReleaseManifestFileName)
 }
 
 // DbtFileReleaseReadMe returns the full name of the release ReadMe file
-func DbtFileReleaseReadMe(rel string) string {
-	return filepath.Join(DbtDirRelease(rel), ReleaseReadMeFileName)
+func DbtFileReleaseReadMe(basename, rel string) string {
+	return filepath.Join(DbtDirRelease(basename, rel), ReleaseReadMeFileName)
 }
 
 // DbtFileReleaseWarning returns the full name of the release Warning file
-func DbtFileReleaseWarning(rel string) string {
-	return filepath.Join(DbtDirRelease(rel), ReleaseWarningFileName)
+func DbtFileReleaseWarning(basename, rel string) string {
+	return filepath.Join(DbtDirRelease(basename, rel), ReleaseWarningFileName)
 }
 
 // checkSubDirs recursively checks the dirs exist in base
@@ -152,12 +152,12 @@ func checkSubDirs(base string, dirs []DirSpec) bool {
 }
 
 // CheckDirs confirms that the necessary directories are present
-func CheckDirs(dbName, schemaName string) bool {
-	if !checkSubDirs(BaseDirName, dirHierarchy) {
+func CheckDirs(basename, dbName, schemaName string) bool {
+	if !checkSubDirs(basename, dirHierarchy) {
 		return false
 	}
 
-	return checkSubDirs(DbtDirDBSchema(dbName, schemaName), schemaDirs)
+	return checkSubDirs(DbtDirDBSchema(basename, dbName, schemaName), schemaDirs)
 }
 
 // makeDirIfMissing will create a directory if it is not present and will
@@ -203,19 +203,19 @@ func makeMissingSubDirs(base string, dirs []DirSpec) error {
 // the right permissions, if there is a file-system object such as
 // a file that is masking the directory, the file system is full
 // etc. The attempt will stop at the first error
-func MakeMissingDirs(dbName, schemaName string) error {
-	err := makeMissingSubDirs(BaseDirName, dirHierarchy)
+func MakeMissingDirs(basename, dbName, schemaName string) error {
+	err := makeMissingSubDirs(basename, dirHierarchy)
 	if err != nil {
 		return err
 	}
 
-	dirName := DbtDirDBSchemaBase()
+	dirName := DbtDirDBSchemaBase(basename)
 	err = makeDirIfMissing(dirName)
 	if err != nil {
 		return err
 	}
 
-	dirName = DbtDirDBSchema(dbName, schemaName)
+	dirName = DbtDirDBSchema(basename, dbName, schemaName)
 	err = makeDirIfMissing(dirName)
 	if err != nil {
 		return err

@@ -11,9 +11,7 @@ import (
 
 	"github.com/nickwells/cli.mod/cli/responder"
 	"github.com/nickwells/dbtools/internal/dbtcommon"
-	"github.com/nickwells/param.mod/v5/param"
-	"github.com/nickwells/param.mod/v5/param/paramset"
-	"github.com/nickwells/versionparams.mod/versionparams"
+	"github.com/nickwells/location.mod/location"
 )
 
 // Created: Wed Apr 12 21:29:46 2017
@@ -26,26 +24,20 @@ const (
 	abort
 )
 
-var (
-	quiet            bool
-	noWarn           bool
-	showReleasesFlag bool
-)
-
-var releaseName string
-
 const errorPrefix = "*** Error ***"
 
 // reportErrors checks if there are any errors and if so prints them and exits
 func reportErrors(errors ...error) {
-	if len(errors) != 0 {
-		for _, err := range errors {
-			if err != nil {
-				fmt.Println(errorPrefix, err)
-			}
-		}
-		os.Exit(1)
+	if len(errors) == 0 {
+		return
 	}
+
+	for _, err := range errors {
+		if err != nil {
+			fmt.Println(errorPrefix, err)
+		}
+	}
+	os.Exit(1)
 }
 
 // printFileHeader prints the header for the printFile func below
@@ -69,7 +61,7 @@ func printAlert(msg string) action {
 }
 
 // printFile prints the file if it exists and is not empty and returns a
-// boolean to indicate whether anything was printed
+// value indicating what to do next
 func printFile(fileName, title, sep string) action {
 	nextAction := doNothing
 
@@ -82,7 +74,7 @@ func printFile(fileName, title, sep string) action {
 			fmt.Sprintf("Couldn't open the file: %q: %s", fileName, err))
 	}
 
-	if fStat.Mode()&os.ModeType != 0 {
+	if !fStat.Mode().IsRegular() {
 		return printAlert(
 			fmt.Sprintf("%q exists but it is not a regular file",
 				fileName))
@@ -118,19 +110,20 @@ func printFile(fileName, title, sep string) action {
 }
 
 // showReadMe prints the ReadMe file if any unless the quiet flag has been set
-func showReadMe(rel string) {
-	if quiet {
+func (prog *Prog) showReadMe() {
+	if prog.quiet {
 		return
 	}
 
-	printFile(dbtcommon.DbtFileReleaseReadMe(rel),
+	printFile(dbtcommon.DbtFileReleaseReadMe(
+		prog.dbp.BaseDirName, prog.releaseName),
 		"Note", "========================================\n")
 }
 
 // showWarning prints the Warnings file (if any) unless the noWarn flag has
 // been set
-func showWarning(rel string) {
-	if noWarn {
+func (prog *Prog) showWarning() {
+	if prog.noWarn {
 		return
 	}
 
@@ -142,7 +135,8 @@ func showWarning(rel string) {
 		},
 		responder.SetMaxReprompts(5))
 
-	switch printFile(dbtcommon.DbtFileReleaseWarning(rel),
+	switch printFile(
+		dbtcommon.DbtFileReleaseWarning(prog.dbp.BaseDirName, prog.releaseName),
 		"Warning", "#################################################\n") {
 	case confirm:
 		if r.GetResponseOrDie() == 'y' {
@@ -156,22 +150,12 @@ func showWarning(rel string) {
 
 // checkReleaseDir checks that the release directory exists and reports an
 // error and a list of releases and exits if it doesn't
-func checkReleaseDir() {
-	err := releaseDirExists(releaseName)
+func (prog *Prog) checkReleaseDir() {
+	err := prog.releaseDirIsOK()
 	if err != nil {
-		fmt.Printf("%s Bad release: %s\n", errorPrefix, releaseName)
+		fmt.Printf("%s Bad release: %s\n", errorPrefix, prog.releaseName)
 		fmt.Printf("\t%s\n", err)
-		releases, err := findReleases()
-		if err != nil {
-			fmt.Printf("\t%s\n", err)
-		} else if len(releases) == 0 {
-			fmt.Println("\tThere are no releases to apply")
-		} else {
-			fmt.Println("\tPossible releases are:")
-			for _, r := range releases {
-				fmt.Println("\t\t", r)
-			}
-		}
+		prog.showReleases("\t", "\t\t")
 		os.Exit(1)
 	}
 }
@@ -180,17 +164,18 @@ func checkReleaseDir() {
 // order. If the file is in the SQL directory then it is applied with the
 // standard SQL command directly. Otherwise the file is executed as a
 // command itself. It reports any errors
-func applyRelease(fileList []string) error {
-	sqlPrefix := dbtcommon.DbtDirReleaseSQL(releaseName)
+func (prog *Prog) applyRelease() error {
+	sqlPrefix := dbtcommon.DbtDirReleaseSQL(
+		prog.dbp.BaseDirName, prog.releaseName)
 
 	var cmd *exec.Cmd
 
-	for _, f := range fileList {
-		if !quiet {
+	for _, f := range prog.fileList {
+		if !prog.quiet {
 			fmt.Println("running:", f)
 		}
 		if strings.HasPrefix(f, sqlPrefix) {
-			cmd = dbtcommon.SQLCommand(f)
+			cmd = dbtcommon.SQLCommand(prog.dbp, f)
 		} else {
 			cmd = exec.Command(f)
 		}
@@ -204,34 +189,49 @@ func applyRelease(fileList []string) error {
 	return nil
 }
 
+// Prog holds parameter values etc
+type Prog struct {
+	quiet      bool
+	noWarn     bool
+	doNotApply bool
+
+	releaseName string
+
+	dbp *dbtcommon.DBParams
+
+	manifestMap map[string]location.L
+	fileList    []string
+}
+
+// NewProg returns a new Prog value, correctly initialised
+func NewProg() *Prog {
+	return &Prog{
+		manifestMap: map[string]location.L{},
+		dbp:         dbtcommon.NewDBParams(),
+	}
+}
+
 func main() {
-	ps := paramset.NewOrDie(
-		addParams,
-		versionparams.AddParams,
-		dbtcommon.AddParams,
-		param.SetProgramDescription("this will apply a set of scripts"+
-			" (typically shell scripts but any executable can be run)."+
-			" The contents of the release directory is checked against"+
-			" a Manifest file which also defines the order in which"+
-			" they should be applied"))
+	prog := NewProg()
+	ps := makeParamSet(prog)
 	ps.Parse()
 
-	checkReleaseDir()
+	prog.checkReleaseDir()
 
-	if showReleasesFlag {
-		showReleases()
+	if prog.doNotApply {
+		prog.showReleases("", "\t")
 		os.Exit(0)
 	}
 
-	showReadMe(releaseName)
-	showWarning(releaseName)
+	prog.showReadMe()
+	prog.showWarning()
 
-	manifestMap, fileList, errors := parseManifest(releaseName)
+	errors := prog.parseManifest()
 	reportErrors(errors...)
 
-	errors = checkForUnusedFiles(releaseName, manifestMap)
+	errors = prog.checkForUnusedFiles()
 	reportErrors(errors...)
 
-	err := applyRelease(fileList)
+	err := prog.applyRelease()
 	reportErrors(err)
 }

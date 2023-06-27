@@ -10,6 +10,7 @@ require (
 	github.com/nickwells/location.mod v1.2.26
 	github.com/nickwells/macros.mod v1.0.26
 	github.com/nickwells/param.mod/v5 v5.19.0
+	github.com/nickwells/testhelper.mod/v2 v2.2.0
 	github.com/nickwells/verbose.mod v1.0.59
 	github.com/nickwells/versionparams.mod v1.1.16
 	github.com/nickwells/xdg.mod v1.0.9
