@@ -61,7 +61,7 @@ func (mfp *manifestFileParser) ParseLine(line string, loc *location.L) error {
 		return loc.Error(err.Error())
 	}
 
-	if fStat.Mode()&os.ModeType != 0 {
+	if !fStat.Mode().IsRegular() {
 		return loc.Errorf("The release directory (%s) contains %q"+
 			" but it is not a regular file",
 			mfp.releaseDir, line)
@@ -103,7 +103,7 @@ func (prog *Prog) parseManifest() []error {
 		return errors
 	}
 
-	if mfStat.Mode()&os.ModeType != 0 {
+	if !mfStat.Mode().IsRegular() {
 		errors = append(errors,
 			fmt.Errorf(
 				"The release directory (%s) contains %q but it is"+

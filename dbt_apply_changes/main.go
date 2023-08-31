@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 
 	"github.com/nickwells/cli.mod/cli/responder"
@@ -140,6 +141,7 @@ func (prog *Prog) showWarning() {
 		"Warning", "#################################################\n") {
 	case confirm:
 		if r.GetResponseOrDie() == 'y' {
+			fmt.Println()
 			return
 		}
 		fallthrough
@@ -167,12 +169,22 @@ func (prog *Prog) checkReleaseDir() {
 func (prog *Prog) applyRelease() error {
 	sqlPrefix := dbtcommon.DbtDirReleaseSQL(
 		prog.dbp.BaseDirName, prog.releaseName)
+	releaseDirPrefix := dbtcommon.DbtDirRelease(
+		prog.dbp.BaseDirName, prog.releaseName)
 
 	var cmd *exec.Cmd
 
+	if !prog.quiet {
+		fmt.Println("Release directory:", releaseDirPrefix)
+		fmt.Println("running:")
+	}
 	for _, f := range prog.fileList {
 		if !prog.quiet {
-			fmt.Println("running:", f)
+			relFile, err := filepath.Rel(releaseDirPrefix, f)
+			if err != nil {
+				relFile = f
+			}
+			fmt.Println("\t", relFile)
 		}
 		if strings.HasPrefix(f, sqlPrefix) {
 			cmd = dbtcommon.SQLCommand(prog.dbp, f)

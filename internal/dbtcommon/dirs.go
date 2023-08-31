@@ -105,7 +105,7 @@ func DbtDirReleaseBase(basename string) string {
 	return filepath.Join(DbtDirStart(basename), ReleaseScriptsBaseName)
 }
 
-// DbtDirRelease returns the full name of the release  directory
+// DbtDirRelease returns the full name of the release directory
 func DbtDirRelease(basename, rel string) string {
 	return filepath.Join(DbtDirReleaseBase(basename), rel)
 }
