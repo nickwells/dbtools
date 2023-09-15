@@ -7,8 +7,8 @@ import (
 	"github.com/nickwells/check.mod/v2/check"
 	"github.com/nickwells/filecheck.mod/filecheck"
 	"github.com/nickwells/location.mod/location"
-	"github.com/nickwells/param.mod/v5/param"
-	"github.com/nickwells/param.mod/v5/param/psetter"
+	"github.com/nickwells/param.mod/v6/param"
+	"github.com/nickwells/param.mod/v6/psetter"
 )
 
 // DBParams holds all of the common values for the DB tools
@@ -99,9 +99,9 @@ func AddParamDBName(dbp *DBParams, ps *param.PSet, opts ...param.OptFunc) {
 	opts = append(opts, param.AltNames("db"),
 		param.Attrs(param.MustBeSet))
 	ps.Add("db-name",
-		psetter.String{
+		psetter.String[string]{
 			Value: &dbp.DbName,
-			Checks: []check.String{
+			Checks: []check.ValCk[string]{
 				check.StringMatchesPattern[string](
 					regexp.MustCompile(`[a-z][a-z0-9_]*`),
 					"a database name: a leading lowercase character"+

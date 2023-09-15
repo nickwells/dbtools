@@ -7,8 +7,8 @@ import (
 
 	"github.com/nickwells/check.mod/v2/check"
 	"github.com/nickwells/dbtools/internal/dbtcommon"
-	"github.com/nickwells/param.mod/v5/param"
-	"github.com/nickwells/param.mod/v5/param/psetter"
+	"github.com/nickwells/param.mod/v6/param"
+	"github.com/nickwells/param.mod/v6/psetter"
 )
 
 func addParams(prog *Prog) param.PSetOptFunc {
@@ -21,7 +21,7 @@ func addParams(prog *Prog) param.PSetOptFunc {
 				" the directories are not all present and to zero otherwise")
 
 		ps.Add("schema-names",
-			psetter.StrList{
+			psetter.StrList[string]{
 				Value: &prog.schemaNames,
 				Checks: []check.StringSlice{
 					check.SliceAll[[]string](

@@ -8,9 +8,9 @@ import (
 	"github.com/nickwells/check.mod/v2/check"
 	"github.com/nickwells/dbtools/internal/dbtcommon"
 	"github.com/nickwells/location.mod/location"
-	"github.com/nickwells/param.mod/v5/param"
-	"github.com/nickwells/param.mod/v5/param/paction"
-	"github.com/nickwells/param.mod/v5/param/psetter"
+	"github.com/nickwells/param.mod/v6/paction"
+	"github.com/nickwells/param.mod/v6/param"
+	"github.com/nickwells/param.mod/v6/psetter"
 )
 
 const (
@@ -36,7 +36,7 @@ func addParams(prog *Prog) param.PSetOptFunc {
 		ps.AddFinalCheck(prog.checkDBSchemaExists)
 		dbtcommon.AddParamPsqlPath(prog.dbp, ps)
 
-		ps.Add("schema", psetter.String{Value: &prog.schemaName},
+		ps.Add("schema", psetter.String[string]{Value: &prog.schemaName},
 			"this gives the name of the schema that is to be applied to the"+
 				" database. The name refers to the name of a schema under "+
 				dbtcommon.DBSchemaDirName+
@@ -45,9 +45,9 @@ func addParams(prog *Prog) param.PSetOptFunc {
 		)
 
 		ps.Add("macro-dirs",
-			psetter.StrList{
+			psetter.StrList[string]{
 				Value: &prog.macroDirs,
-				Checks: []check.StringSlice{
+				Checks: []check.ValCk[[]string]{
 					check.SliceLength[[]string](check.ValGT(0)),
 					check.SliceHasNoDups[[]string, string],
 				},
@@ -60,7 +60,7 @@ func addParams(prog *Prog) param.PSetOptFunc {
 				"a lowercase letter or underscore followed by 0 or more"+
 					" lowercase letters, undescores or digits"))
 		noDupsCheck := check.SliceHasNoDups[[]string, string]
-		schemaObjChecks := []check.StringSlice{
+		schemaObjChecks := []check.ValCk[[]string]{
 			check.SliceLength[[]string](check.ValGT(0)),
 			noDupsCheck,
 			schemaObjNameCheck,
@@ -69,7 +69,7 @@ func addParams(prog *Prog) param.PSetOptFunc {
 		{
 			var names []string
 			ps.Add(paramNameTypes,
-				psetter.StrList{
+				psetter.StrList[string]{
 					Value:  &names,
 					Checks: schemaObjChecks,
 				},
@@ -96,7 +96,7 @@ func addParams(prog *Prog) param.PSetOptFunc {
 		{
 			var names []string
 			ps.Add(paramNameTables,
-				psetter.StrList{
+				psetter.StrList[string]{
 					Value:  &names,
 					Checks: schemaObjChecks,
 				},
@@ -124,7 +124,7 @@ func addParams(prog *Prog) param.PSetOptFunc {
 		{
 			var names []string
 			ps.Add(paramNameFuncs,
-				psetter.StrList{
+				psetter.StrList[string]{
 					Value:  &names,
 					Checks: schemaObjChecks,
 				},
@@ -152,7 +152,7 @@ func addParams(prog *Prog) param.PSetOptFunc {
 		{
 			var names []string
 			ps.Add(paramNameTriggers,
-				psetter.StrList{
+				psetter.StrList[string]{
 					Value:  &names,
 					Checks: schemaObjChecks,
 				},

@@ -4,9 +4,9 @@ import (
 	"fmt"
 
 	"github.com/nickwells/dbtools/internal/dbtcommon"
-	"github.com/nickwells/param.mod/v5/param"
-	"github.com/nickwells/param.mod/v5/param/paction"
-	"github.com/nickwells/param.mod/v5/param/psetter"
+	"github.com/nickwells/param.mod/v6/paction"
+	"github.com/nickwells/param.mod/v6/param"
+	"github.com/nickwells/param.mod/v6/psetter"
 )
 
 const (
@@ -19,7 +19,7 @@ func addParams(prog *Prog) param.PSetOptFunc {
 		var flagCounter paction.Counter
 
 		ps.Add(paramNameRelease,
-			psetter.String{
+			psetter.String[string]{
 				Value: &prog.releaseName,
 			},
 			"this gives the name of the release to be applied to the database."+
