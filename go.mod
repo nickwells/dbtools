@@ -13,7 +13,7 @@ require (
 	github.com/nickwells/macros.mod v1.0.28
 	github.com/nickwells/testhelper.mod/v2 v2.3.0
 	github.com/nickwells/verbose.mod v1.0.61
-	github.com/nickwells/versionparams.mod v1.1.18
+	github.com/nickwells/versionparams.mod v1.2.0
 	github.com/nickwells/xdg.mod v1.0.9
 )
 
