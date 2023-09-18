@@ -12,13 +12,13 @@ require (
 	github.com/nickwells/location.mod v1.2.27
 	github.com/nickwells/macros.mod v1.0.28
 	github.com/nickwells/testhelper.mod/v2 v2.3.0
-	github.com/nickwells/verbose.mod v1.0.61
-	github.com/nickwells/versionparams.mod v1.2.0
+	github.com/nickwells/verbose.mod v1.0.62
+	github.com/nickwells/versionparams.mod v1.2.3
 	github.com/nickwells/xdg.mod v1.0.9
 )
 
 require (
-	github.com/nickwells/param.mod/v6 v6.0.0
+	github.com/nickwells/param.mod/v6 v6.0.1
 	github.com/nickwells/tempus.mod v1.0.4 // indirect
 )
 
