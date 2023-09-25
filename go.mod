@@ -5,21 +5,21 @@ go 1.21
 toolchain go1.21.0
 
 require (
-	github.com/nickwells/check.mod/v2 v2.1.12
+	github.com/nickwells/check.mod/v2 v2.1.13
 	github.com/nickwells/cli.mod v1.1.2
-	github.com/nickwells/filecheck.mod v1.1.22
+	github.com/nickwells/filecheck.mod v1.1.23
 	github.com/nickwells/fileparse.mod v1.1.31
 	github.com/nickwells/location.mod v1.2.27
-	github.com/nickwells/macros.mod v1.0.28
+	github.com/nickwells/macros.mod v1.0.29
 	github.com/nickwells/testhelper.mod/v2 v2.3.0
-	github.com/nickwells/verbose.mod v1.0.63
-	github.com/nickwells/versionparams.mod v1.2.4
+	github.com/nickwells/verbose.mod v1.0.64
+	github.com/nickwells/versionparams.mod v1.2.5
 	github.com/nickwells/xdg.mod v1.0.9
 )
 
 require (
-	github.com/nickwells/param.mod/v6 v6.1.0
-	github.com/nickwells/tempus.mod v1.0.4 // indirect
+	github.com/nickwells/param.mod/v6 v6.1.1
+	github.com/nickwells/tempus.mod v1.1.0 // indirect
 )
 
 require (
