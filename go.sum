@@ -32,8 +32,8 @@ github.com/nickwells/timer.mod v1.2.3 h1:3FbjrdKmgzoUWSjhvajgkUEWrC364iuvkd+OXLR
 github.com/nickwells/timer.mod v1.2.3/go.mod h1:se+56AyN3i8W2ME7JFi5G8D86On6U6AOjX9TTyuTlNE=
 github.com/nickwells/twrap.mod v1.5.4 h1:RX+zbL3+oe9zLUKLEkVkk2E2m6B7HEvJNyU2PDOPkN0=
 github.com/nickwells/twrap.mod v1.5.4/go.mod h1:zUdD2gq6DnMiLn1uWuJWUpiOCuQvlxS1p5yJGxdp7uk=
-github.com/nickwells/verbose.mod v1.1.0 h1:KCf2tP5LKNy9VlEPXhGsubQ8o5nCI4PtqdebVSGTrKQ=
-github.com/nickwells/verbose.mod v1.1.0/go.mod h1:Q4phAaHBmEQPkmoJXzVAH1zR24CWa5hLOByyraSn7yQ=
+github.com/nickwells/verbose.mod v1.1.1 h1:LeTXheF0JUrZAfCZlYIfo4VRBs5+HszBcWgyH6o1GzI=
+github.com/nickwells/verbose.mod v1.1.1/go.mod h1:mlVagAMihGCnq2c1XWiKg1ZcWhrPXeGCmaU3/vfpKeg=
 github.com/nickwells/versionparams.mod v1.2.6 h1:e2F0vCv8dL8GLpNnaICuvrZBTSRCyQXp5ED0eLPudj0=
 github.com/nickwells/versionparams.mod v1.2.6/go.mod h1:4YuB65pPVJ3ITOw0Tyo6tOezP0pzl8BnHtL+2lX162g=
 github.com/nickwells/xdg.mod v1.0.9 h1:IQhytP6QBCC2xrSVXTE0GDbYJSD8E25H6sSqd7jtCHA=
