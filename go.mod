@@ -12,15 +12,15 @@ require (
 	github.com/nickwells/location.mod v1.2.27
 	github.com/nickwells/macros.mod v1.1.0
 	github.com/nickwells/testhelper.mod/v2 v2.3.0
-	github.com/nickwells/verbose.mod v1.1.1
-	github.com/nickwells/versionparams.mod v1.2.6
+	github.com/nickwells/verbose.mod v1.1.2
+	github.com/nickwells/versionparams.mod v1.2.7
 	github.com/nickwells/xdg.mod v1.0.9
 )
 
 require github.com/nickwells/timer.mod v1.2.3 // indirect
 
 require (
-	github.com/nickwells/param.mod/v6 v6.1.3
+	github.com/nickwells/param.mod/v6 v6.1.4
 	github.com/nickwells/tempus.mod v1.1.0 // indirect
 )
 
