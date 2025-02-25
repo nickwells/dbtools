@@ -68,6 +68,7 @@ func addParams(prog *Prog) param.PSetOptFunc {
 
 		{
 			var names []string
+
 			ps.Add(paramNameTypes,
 				psetter.StrList[string]{
 					Value:  &names,
@@ -82,7 +83,9 @@ func addParams(prog *Prog) param.PSetOptFunc {
 							s = &schema{}
 							prog.schemas[dbtcommon.SchemaSubDirTypes] = s
 						}
+
 						s.names = append(s.names, names...)
+
 						if err := noDupsCheck(s.names); err != nil {
 							return fmt.Errorf("Duplicate types: %w", err)
 						}
@@ -95,6 +98,7 @@ func addParams(prog *Prog) param.PSetOptFunc {
 
 		{
 			var names []string
+
 			ps.Add(paramNameTables,
 				psetter.StrList[string]{
 					Value:  &names,
@@ -110,7 +114,9 @@ func addParams(prog *Prog) param.PSetOptFunc {
 							s = &schema{}
 							prog.schemas[dbtcommon.SchemaSubDirTables] = s
 						}
+
 						s.names = append(s.names, names...)
+
 						if err := noDupsCheck(s.names); err != nil {
 							return fmt.Errorf("Duplicate tables: %w", err)
 						}
@@ -123,6 +129,7 @@ func addParams(prog *Prog) param.PSetOptFunc {
 
 		{
 			var names []string
+
 			ps.Add(paramNameFuncs,
 				psetter.StrList[string]{
 					Value:  &names,
@@ -138,7 +145,9 @@ func addParams(prog *Prog) param.PSetOptFunc {
 							s = &schema{}
 							prog.schemas[dbtcommon.SchemaSubDirFuncs] = s
 						}
+
 						s.names = append(s.names, names...)
+
 						if err := noDupsCheck(s.names); err != nil {
 							return fmt.Errorf("Duplicate funcs: %w", err)
 						}
@@ -151,6 +160,7 @@ func addParams(prog *Prog) param.PSetOptFunc {
 
 		{
 			var names []string
+
 			ps.Add(paramNameTriggers,
 				psetter.StrList[string]{
 					Value:  &names,
@@ -166,7 +176,9 @@ func addParams(prog *Prog) param.PSetOptFunc {
 							s = &schema{}
 							prog.schemas[dbtcommon.SchemaSubDirTriggers] = s
 						}
+
 						s.names = append(s.names, names...)
+
 						if err := noDupsCheck(s.names); err != nil {
 							return fmt.Errorf("Duplicate triggers: %w", err)
 						}
@@ -191,6 +203,7 @@ func addParams(prog *Prog) param.PSetOptFunc {
 				return errors.New("You must give at least one" +
 					" type, table, trigger or func name")
 			}
+
 			return nil
 		})
 

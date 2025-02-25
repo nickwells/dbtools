@@ -35,6 +35,7 @@ func (prog *Prog) checkDBSchemaExists() error {
 	exists := filecheck.DirExists()
 	dirName := dbtcommon.DbtDirDBSchema(
 		prog.dbp.BaseDirName, prog.dbp.DbName, prog.schemaName)
+
 	return exists.StatusCheck(dirName)
 }
 
@@ -57,7 +58,9 @@ func (prog *Prog) makeFileLists() {
 			if !strings.HasSuffix(name, ".sql") {
 				name += ".sql"
 			}
+
 			name = filepath.Join(sdName, name)
+
 			err := existence.StatusCheck(name)
 			if err != nil {
 				errs = append(errs, err)
@@ -70,6 +73,7 @@ func (prog *Prog) makeFileLists() {
 			for _, err := range errs {
 				fmt.Fprintln(os.Stderr, err)
 			}
+
 			os.Exit(1)
 		}
 	}
@@ -79,11 +83,14 @@ func (prog *Prog) makeFileLists() {
 func (prog *Prog) applyFile(f string) error {
 	verbose.Println("applying schema file: ",
 		strings.Replace(f, prog.dbp.BaseDirName, "[base-dir]", 1))
+
 	sql, err := prog.translateFile(f)
 	if err != nil {
 		return err
 	}
+
 	err = prog.applySQL(sql)
+
 	return err
 }
 
@@ -98,18 +105,23 @@ func (prog *Prog) translateFile(f string) (string, error) {
 	sql := "SET search_path TO " + prog.schemaName + ";\n"
 	scanner := bufio.NewScanner(sqlFile)
 	loc := location.New(f)
+
 	for scanner.Scan() {
 		loc.Incr()
+
 		line, err := prog.macroCache.Substitute(scanner.Text(), loc)
 		if err != nil {
 			return "", err
 		}
+
 		sql += line + "\n"
 	}
+
 	err = scanner.Err()
 	if err != nil {
 		return "", err
 	}
+
 	return sql, nil
 }
 
@@ -145,11 +157,13 @@ func (prog *Prog) generateAuditTable(tbl string) {
 	if !prog.createAuditTables {
 		return
 	}
+
 	auditTbl := tbl + "_aud"
 
 	sql := "SET search_path TO " + prog.schemaName + ";\n" +
 		"CREATE TABLE " + auditTbl + " AS SELECT * FROM " + tbl +
 		" WITH NO DATA;\n"
+
 	err := prog.applySQL(sql)
 	if err != nil {
 		fmt.Fprintf(os.Stderr,
@@ -165,10 +179,13 @@ func (prog *Prog) generateAuditTable(tbl string) {
 // database. It exits on the first failure to apply a file.
 func (prog *Prog) applyAllFiles() {
 	verbose.Println("applying files")
+
 	for schemaPart, s := range prog.schemas {
 		verbose.Println("\t", schemaPart)
+
 		for i, f := range s.files {
 			verbose.Println("\t\t", f)
+
 			err := prog.applyFile(f)
 			if err != nil {
 				fmt.Fprintf(os.Stderr, "Couldn't apply the schema %q file: %s\n",
@@ -188,6 +205,7 @@ func (prog *Prog) applyAllFiles() {
 // directory to the list of directories first.
 func (prog *Prog) makeMacroCache() {
 	verbose.Println("construct the Macro cache")
+
 	prog.macroDirs = append(prog.macroDirs,
 		dbtcommon.DbtDirMacros(prog.dbp.BaseDirName))
 
@@ -198,6 +216,7 @@ func (prog *Prog) makeMacroCache() {
 		fmt.Println("Couldn't construct the macro cache: ", err)
 		os.Exit(1)
 	}
+
 	prog.macroCache = mc
 }
 

@@ -38,6 +38,7 @@ func reportErrors(errors ...error) {
 			fmt.Println(errorPrefix, err)
 		}
 	}
+
 	os.Exit(1)
 }
 
@@ -51,7 +52,9 @@ func printFileHeader(title, sep string) {
 
 // printAlert prints a message with a surrounding alert box
 func printAlert(msg string) action {
-	box := strings.Repeat("*", 40)
+	const boxWidth = 40
+
+	box := strings.Repeat("*", boxWidth)
 
 	fmt.Println(box)
 	fmt.Println("* " + errorPrefix)
@@ -71,6 +74,7 @@ func printFile(fileName, title, sep string) action {
 		if os.IsNotExist(err) {
 			return nextAction
 		}
+
 		return printAlert(
 			fmt.Sprintf("Couldn't open the file: %q: %s", fileName, err))
 	}
@@ -86,17 +90,22 @@ func printFile(fileName, title, sep string) action {
 		return printAlert(
 			fmt.Sprintf("Couldn't open %q: %s\n", fileName, err))
 	}
+
 	defer fd.Close()
 
 	scanner := bufio.NewScanner(fd)
 	for scanner.Scan() {
 		if nextAction == doNothing {
 			printFileHeader(title, sep)
+
 			nextAction = confirm
 		}
+
 		line := scanner.Text()
+
 		fmt.Println(line)
 	}
+
 	if err = scanner.Err(); err != nil {
 		return printAlert(
 			fmt.Sprintf("%s While reading %q: %s\n",
@@ -107,6 +116,7 @@ func printFile(fileName, title, sep string) action {
 		fmt.Print(sep)
 		fmt.Println()
 	}
+
 	return nextAction
 }
 
@@ -128,13 +138,15 @@ func (prog *Prog) showWarning() {
 		return
 	}
 
+	const repromptCount = 5
+
 	r := responder.NewOrPanic(
 		"Do you want to continue",
 		map[rune]string{
 			'y': "apply the changes",
 			'n': "abort the changes",
 		},
-		responder.SetMaxReprompts(5))
+		responder.SetMaxReprompts(repromptCount))
 
 	switch printFile(
 		dbtcommon.DbtFileReleaseWarning(prog.dbp.BaseDirName, prog.releaseName),
@@ -144,6 +156,7 @@ func (prog *Prog) showWarning() {
 			fmt.Println()
 			return
 		}
+
 		fallthrough
 	case abort:
 		os.Exit(1)
@@ -178,26 +191,32 @@ func (prog *Prog) applyRelease() error {
 		fmt.Println("Release directory:", releaseDirPrefix)
 		fmt.Println("running:")
 	}
+
 	for _, f := range prog.fileList {
 		if !prog.quiet {
 			relFile, err := filepath.Rel(releaseDirPrefix, f)
 			if err != nil {
 				relFile = f
 			}
+
 			fmt.Println("\t", relFile)
 		}
+
 		if strings.HasPrefix(f, sqlPrefix) {
 			cmd = dbtcommon.SQLCommand(prog.dbp, f)
 		} else {
 			cmd = exec.Command(f)
 		}
+
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
+
 		err := cmd.Run()
 		if err != nil {
 			return fmt.Errorf("running %s: %s", f, err)
 		}
 	}
+
 	return nil
 }
 

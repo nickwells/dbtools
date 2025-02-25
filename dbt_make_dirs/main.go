@@ -34,13 +34,16 @@ func main() {
 	var missingDirs bool
 
 	verbose.Println("base dir: " + prog.dbp.BaseDirName)
+
 	for _, schemaName := range prog.schemaNames {
 		verbose.Println("db.schema: " + prog.dbp.DbName + "." + schemaName)
+
 		if dbtcommon.CheckDirs(
 			prog.dbp.BaseDirName, prog.dbp.DbName, schemaName) {
 			verbose.Println("All required directories are already present")
 		} else {
 			verbose.Println("Some directories are missing")
+
 			missingDirs = true
 
 			if !prog.onlyCheck {
@@ -52,12 +55,15 @@ func main() {
 						err)
 					os.Exit(1)
 				}
+
 				verbose.Println("Missing directories created")
 			}
 		}
 	}
+
 	if prog.onlyCheck && missingDirs {
 		os.Exit(1)
 	}
+
 	os.Exit(0)
 }

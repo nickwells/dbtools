@@ -30,12 +30,15 @@ func (prog *Prog) findReleases() ([]string, error) {
 	}
 
 	relDirs := make([]string, 0)
+
 	for _, entry := range contents {
 		if ignoreEntry[entry.Name()] || !entry.IsDir() {
 			continue
 		}
+
 		relDirs = append(relDirs, entry.Name())
 	}
+
 	sort.Strings(relDirs)
 
 	return relDirs, nil
@@ -58,6 +61,7 @@ func (mfp *manifestFileParser) ParseLine(line string, loc *location.L) error {
 				"The release directory (%s) does not contain %q",
 				mfp.releaseDir, line)
 		}
+
 		return loc.Error(err.Error())
 	}
 
@@ -71,6 +75,7 @@ func (mfp *manifestFileParser) ParseLine(line string, loc *location.L) error {
 		return loc.Errorf("The file is already in the manifest at: %s",
 			prevLoc)
 	}
+
 	mfp.fileMap[line] = *loc
 	*mfp.fileList = append(*mfp.fileList, file)
 
@@ -86,6 +91,7 @@ func (prog *Prog) parseManifest() []error {
 		prog.dbp.BaseDirName, prog.releaseName)
 	relDir := dbtcommon.DbtDirRelease(
 		prog.dbp.BaseDirName, prog.releaseName)
+
 	var errors []error
 
 	mfStat, err := os.Stat(manifest)
@@ -100,6 +106,7 @@ func (prog *Prog) parseManifest() []error {
 						" should be applied",
 					relDir, dbtcommon.ReleaseManifestFileName))
 		}
+
 		return errors
 	}
 
@@ -109,6 +116,7 @@ func (prog *Prog) parseManifest() []error {
 				"The release directory (%s) contains %q but it is"+
 					" not a regular file",
 				relDir, dbtcommon.ReleaseManifestFileName))
+
 		return errors
 	}
 
@@ -138,6 +146,7 @@ func (prog *Prog) checkForUnusedFiles() []error {
 	errors := make([]error, 0)
 
 	relDir := dbtcommon.DbtDirRelease(prog.dbp.BaseDirName, prog.releaseName)
+
 	dir, err := os.Open(relDir)
 	if err != nil {
 		return append(errors, err)
@@ -161,6 +170,7 @@ func (prog *Prog) checkForUnusedFiles() []error {
 		if ignoreEntry[entry.Name()] {
 			continue
 		}
+
 		if _, ok := prog.manifestMap[entry.Name()]; !ok {
 			errors = append(errors,
 				fmt.Errorf("the release directory (%s) contains %q"+
@@ -182,12 +192,14 @@ func (prog *Prog) releaseDirIsOK() error {
 	}
 
 	relDir := dbtcommon.DbtDirRelease(prog.dbp.BaseDirName, prog.releaseName)
+
 	rdStat, err := os.Stat(relDir)
 	if err != nil {
 		if os.IsNotExist(err) {
 			return fmt.Errorf("The release directory (%s) does not exist",
 				relDir)
 		}
+
 		return err
 	}
 

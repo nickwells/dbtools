@@ -64,6 +64,7 @@ func addParams(prog *Prog) param.PSetOptFunc {
 					"you must set either the %q or the %q parameter",
 					paramNameRelease, paramNameShowRelease)
 			}
+
 			return nil
 		})
 		ps.AddFinalCheck(func() error {
@@ -72,6 +73,7 @@ func addParams(prog *Prog) param.PSetOptFunc {
 					"you must only set one of the %q or %q parameters",
 					paramNameRelease, paramNameShowRelease)
 			}
+
 			return nil
 		})
 
