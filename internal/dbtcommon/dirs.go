@@ -134,20 +134,25 @@ func DbtFileReleaseWarning(basename, rel string) string {
 func checkSubDirs(base string, dirs []DirSpec) bool {
 	for _, d := range dirs {
 		dirName := filepath.Join(base, d.name)
+
 		info, err := os.Stat(dirName)
 		if err != nil {
 			return false
 		}
+
 		if !info.Mode().IsDir() {
 			return false
 		}
+
 		if d.ignoreContent {
 			continue
 		}
+
 		if !checkSubDirs(dirName, d.subDirs) {
 			return false
 		}
 	}
+
 	return true
 }
 
@@ -176,6 +181,7 @@ func makeDirIfMissing(dirName string) error {
 			" - it already exists and is not a directory",
 			dirName)
 	}
+
 	return nil
 }
 
@@ -184,6 +190,7 @@ func makeDirIfMissing(dirName string) error {
 func makeMissingSubDirs(base string, dirs []DirSpec) error {
 	for _, d := range dirs {
 		dirName := filepath.Join(base, d.name)
+
 		err := makeDirIfMissing(dirName)
 		if err != nil {
 			return err
@@ -195,6 +202,7 @@ func makeMissingSubDirs(base string, dirs []DirSpec) error {
 			}
 		}
 	}
+
 	return nil
 }
 
@@ -210,17 +218,18 @@ func MakeMissingDirs(basename, dbName, schemaName string) error {
 	}
 
 	dirName := DbtDirDBSchemaBase(basename)
+
 	err = makeDirIfMissing(dirName)
 	if err != nil {
 		return err
 	}
 
 	dirName = DbtDirDBSchema(basename, dbName, schemaName)
+
 	err = makeDirIfMissing(dirName)
 	if err != nil {
 		return err
 	}
 
-	err = makeMissingSubDirs(dirName, schemaDirs)
-	return err
+	return makeMissingSubDirs(dirName, schemaDirs)
 }

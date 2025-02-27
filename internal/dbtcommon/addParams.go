@@ -32,16 +32,16 @@ func NewDBParams() *DBParams {
 }
 
 const (
-	// DbtEnvPrefix is the prefix that is applied to any parameters to be set in
-	// the environment rather than the command line
+	// DbtEnvPrefix is the prefix that is applied to any parameters to be set
+	// in the environment rather than the command line
 	DbtEnvPrefix = "DBTOOLS_"
 
-	// DbtBaseDirParamName is the name of the parameter that is used to set the
-	// BaseDirName value
+	// DbtBaseDirParamName is the name of the parameter that is used to set
+	// the BaseDirName value
 	DbtBaseDirParamName = "base-dir"
 
-	// DbtPsqlPathParamName is the name of the parameter that is used to override
-	// the name of the postgresql command line tool
+	// DbtPsqlPathParamName is the name of the parameter that is used to
+	// override the name of the postgresql command line tool
 	DbtPsqlPathParamName = "psql-path"
 )
 
@@ -70,6 +70,7 @@ func setPsqlPathEnvVar(dbp *DBParams) param.ActionFunc {
 func AddParams(dbp *DBParams) param.PSetOptFunc {
 	return func(ps *param.PSet) error {
 		const paramGroupName = "pkg.dbtcommon"
+
 		ps.AddGroup(paramGroupName,
 			`parameters for any of the commands in the dbTools family`)
 
