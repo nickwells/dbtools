@@ -34,6 +34,7 @@ func setConfigFileForGroupPkgDbtcommon(ps *param.PSet) error {
 			"dbtcommon",
 			"group-pkg.dbtcommon.cfg"),
 		filecheck.Optional)
+
 	return nil
 }
 
@@ -63,5 +64,6 @@ func setGlobalConfigFileForGroupPkgDbtcommon(ps *param.PSet) error {
 			"dbtcommon",
 			"group-pkg.dbtcommon.cfg"),
 		filecheck.Optional)
+
 	return nil
 }

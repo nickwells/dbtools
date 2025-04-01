@@ -87,7 +87,7 @@ func addParams(prog *Prog) param.PSetOptFunc {
 						s.names = append(s.names, names...)
 
 						if err := noDupsCheck(s.names); err != nil {
-							return fmt.Errorf("Duplicate types: %w", err)
+							return fmt.Errorf("duplicate types: %w", err)
 						}
 
 						return nil
@@ -118,7 +118,7 @@ func addParams(prog *Prog) param.PSetOptFunc {
 						s.names = append(s.names, names...)
 
 						if err := noDupsCheck(s.names); err != nil {
-							return fmt.Errorf("Duplicate tables: %w", err)
+							return fmt.Errorf("duplicate tables: %w", err)
 						}
 
 						return nil
@@ -149,7 +149,7 @@ func addParams(prog *Prog) param.PSetOptFunc {
 						s.names = append(s.names, names...)
 
 						if err := noDupsCheck(s.names); err != nil {
-							return fmt.Errorf("Duplicate funcs: %w", err)
+							return fmt.Errorf("duplicate funcs: %w", err)
 						}
 
 						return nil
@@ -180,7 +180,7 @@ func addParams(prog *Prog) param.PSetOptFunc {
 						s.names = append(s.names, names...)
 
 						if err := noDupsCheck(s.names); err != nil {
-							return fmt.Errorf("Duplicate triggers: %w", err)
+							return fmt.Errorf("duplicate triggers: %w", err)
 						}
 
 						return nil
@@ -200,7 +200,7 @@ func addParams(prog *Prog) param.PSetOptFunc {
 
 		ps.AddFinalCheck(func() error {
 			if schemaObjParamCounter.Count() == 0 {
-				return errors.New("You must give at least one" +
+				return errors.New("you must give at least one" +
 					" type, table, trigger or func name")
 			}
 

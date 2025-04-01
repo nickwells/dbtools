@@ -100,7 +100,7 @@ func (prog *Prog) parseManifest() []error {
 		if os.IsNotExist(err) {
 			errors = append(errors,
 				fmt.Errorf(
-					"The release directory (%s) does not contain a"+
+					"the release directory (%s) does not contain a"+
 						" file called %q. This lists the release"+
 						" files to apply and the order in which they"+
 						" should be applied",
@@ -113,7 +113,7 @@ func (prog *Prog) parseManifest() []error {
 	if !mfStat.Mode().IsRegular() {
 		errors = append(errors,
 			fmt.Errorf(
-				"The release directory (%s) contains %q but it is"+
+				"the release directory (%s) contains %q but it is"+
 					" not a regular file",
 				relDir, dbtcommon.ReleaseManifestFileName))
 
@@ -196,7 +196,7 @@ func (prog *Prog) releaseDirIsOK() error {
 	rdStat, err := os.Stat(relDir)
 	if err != nil {
 		if os.IsNotExist(err) {
-			return fmt.Errorf("The release directory (%s) does not exist",
+			return fmt.Errorf("the release directory (%s) does not exist",
 				relDir)
 		}
 

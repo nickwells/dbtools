@@ -177,7 +177,7 @@ func makeDirIfMissing(dirName string) error {
 	} else if err != nil {
 		return err
 	} else if !info.Mode().IsDir() {
-		return fmt.Errorf("Couldn't create the directory %q"+
+		return fmt.Errorf("couldn't create the directory %q"+
 			" - it already exists and is not a directory",
 			dirName)
 	}
