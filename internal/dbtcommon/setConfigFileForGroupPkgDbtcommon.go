@@ -53,6 +53,7 @@ func setGlobalConfigFileForGroupPkgDbtcommon(ps *param.PSet) error {
 	if len(dirs) == 0 {
 		return nil
 	}
+
 	baseDir := dirs[0]
 
 	ps.AddGroupConfigFile("pkg.dbtcommon",
