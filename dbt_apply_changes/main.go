@@ -85,7 +85,7 @@ func printFile(fileName, title, sep string) action {
 				fileName))
 	}
 
-	fd, err := os.Open(fileName)
+	fd, err := os.Open(fileName) //nolint:gosec
 	if err != nil {
 		return printAlert(
 			fmt.Sprintf("Couldn't open %q: %s\n", fileName, err))
@@ -205,7 +205,7 @@ func (prog *Prog) applyRelease() error {
 		if strings.HasPrefix(f, sqlPrefix) {
 			cmd = dbtcommon.SQLCommand(prog.dbp, f)
 		} else {
-			cmd = exec.Command(f)
+			cmd = exec.Command(f) //nolint:gosec
 		}
 
 		cmd.Stdout = os.Stdout

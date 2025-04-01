@@ -147,7 +147,7 @@ func (prog *Prog) checkForUnusedFiles() []error {
 
 	relDir := dbtcommon.DbtDirRelease(prog.dbp.BaseDirName, prog.releaseName)
 
-	dir, err := os.Open(relDir)
+	dir, err := os.Open(relDir) //nolint:gosec
 	if err != nil {
 		return append(errors, err)
 	}

@@ -96,7 +96,7 @@ func (prog *Prog) applyFile(f string) error {
 
 // translateFile reads the file applying any macros found
 func (prog *Prog) translateFile(f string) (string, error) {
-	sqlFile, err := os.Open(f)
+	sqlFile, err := os.Open(f) //nolint:gosec
 	if err != nil {
 		return "", err
 	}
