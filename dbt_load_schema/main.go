@@ -141,6 +141,7 @@ func (prog *Prog) applySQL(sql string) error {
 
 	go func() {
 		defer cmdIn.Close()
+
 		_, _ = io.WriteString(cmdIn, sql)
 	}()
 

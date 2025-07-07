@@ -29,7 +29,7 @@ func addParams(prog *Prog) param.PSetOptFunc {
 			paramNameTriggers,
 		}
 
-		var schemaObjParamCounter paction.Counter
+		schemaObjParamCounter := paction.Counter{}
 		countSchema := (&schemaObjParamCounter).MakeActionFunc()
 
 		dbtcommon.AddParamDBName(prog.dbp, ps, param.Attrs(param.MustBeSet))

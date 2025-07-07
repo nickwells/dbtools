@@ -51,6 +51,7 @@ func setBaseDirEnvVar(dbp *DBParams) param.ActionFunc {
 	return func(_ location.L, p *param.ByName, _ []string) error {
 		envVarName := DbtEnvPrefix +
 			param.ConvertParamNameToEnvVarName(p.Name())
+
 		return os.Setenv(envVarName, dbp.BaseDirName)
 	}
 }
@@ -61,6 +62,7 @@ func setPsqlPathEnvVar(dbp *DBParams) param.ActionFunc {
 	return func(_ location.L, p *param.ByName, _ []string) error {
 		envVarName := DbtEnvPrefix +
 			param.ConvertParamNameToEnvVarName(p.Name())
+
 		return os.Setenv(envVarName, dbp.PsqlPath)
 	}
 }
