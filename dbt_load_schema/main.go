@@ -102,7 +102,12 @@ func (prog *Prog) translateFile(f string) (string, error) {
 	}
 	defer sqlFile.Close()
 
-	sql := "SET search_path TO " + prog.schemaName + ";\n"
+	var sql strings.Builder
+
+	sql.WriteString("SET search_path TO ")
+	sql.WriteString(prog.schemaName)
+	sql.WriteString(";\n")
+
 	scanner := bufio.NewScanner(sqlFile)
 	loc := location.New(f)
 
@@ -114,7 +119,8 @@ func (prog *Prog) translateFile(f string) (string, error) {
 			return "", err
 		}
 
-		sql += line + "\n"
+		sql.WriteString(line)
+		sql.WriteString("\n")
 	}
 
 	err = scanner.Err()
@@ -122,7 +128,7 @@ func (prog *Prog) translateFile(f string) (string, error) {
 		return "", err
 	}
 
-	return sql, nil
+	return sql.String(), nil
 }
 
 // applySQL writes the passed buffer to the sql command
