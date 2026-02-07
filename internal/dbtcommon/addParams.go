@@ -7,8 +7,8 @@ import (
 	"github.com/nickwells/check.mod/v2/check"
 	"github.com/nickwells/filecheck.mod/filecheck"
 	"github.com/nickwells/location.mod/location"
-	"github.com/nickwells/param.mod/v6/param"
-	"github.com/nickwells/param.mod/v6/psetter"
+	"github.com/nickwells/param.mod/v7/param"
+	"github.com/nickwells/param.mod/v7/psetter"
 )
 
 // DBParams holds all of the common values for the DB tools
@@ -48,7 +48,7 @@ const (
 // setBaseDirEnvVar sets the value of the environment variable for the
 // Base-directory to the value in the DBParams object
 func setBaseDirEnvVar(dbp *DBParams) param.ActionFunc {
-	return func(_ location.L, p *param.ByName, _ []string) error {
+	return func(_ location.L, p *param.BaseParam, _ []string) error {
 		envVarName := DbtEnvPrefix +
 			param.ConvertParamNameToEnvVarName(p.Name())
 
@@ -59,7 +59,7 @@ func setBaseDirEnvVar(dbp *DBParams) param.ActionFunc {
 // setPsqlPathEnvVar sets the value of the environment variable for the
 // psql pathname to the value in the DBParams object
 func setPsqlPathEnvVar(dbp *DBParams) param.ActionFunc {
-	return func(_ location.L, p *param.ByName, _ []string) error {
+	return func(_ location.L, p *param.BaseParam, _ []string) error {
 		envVarName := DbtEnvPrefix +
 			param.ConvertParamNameToEnvVarName(p.Name())
 
@@ -98,7 +98,9 @@ func AddParams(dbp *DBParams) param.PSetOptFunc {
 
 // AddParamDBName adds the standard db parameter. Not all commands need this
 // and so it is not added in the AddParams function above
-func AddParamDBName(dbp *DBParams, ps *param.PSet, opts ...param.OptFunc) {
+func AddParamDBName(
+	dbp *DBParams, ps *param.PSet, opts ...param.ByNameOptFunc,
+) {
 	opts = append(opts, param.AltNames("db"),
 		param.Attrs(param.MustBeSet))
 	ps.Add("db-name",
@@ -118,7 +120,9 @@ func AddParamDBName(dbp *DBParams, ps *param.PSet, opts ...param.OptFunc) {
 
 // AddParamPsqlPath adds the standard psql-name parameter. Not all commands
 // need this and so it is not added in the AddParams function above
-func AddParamPsqlPath(dbp *DBParams, ps *param.PSet, opts ...param.OptFunc) {
+func AddParamPsqlPath(
+	dbp *DBParams, ps *param.PSet, opts ...param.ByNameOptFunc,
+) {
 	opts = append(opts, param.PostAction(setPsqlPathEnvVar(dbp)))
 	ps.Add(DbtPsqlPathParamName,
 		psetter.Pathname{

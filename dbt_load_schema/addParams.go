@@ -8,9 +8,9 @@ import (
 	"github.com/nickwells/check.mod/v2/check"
 	"github.com/nickwells/dbtools/internal/dbtcommon"
 	"github.com/nickwells/location.mod/location"
-	"github.com/nickwells/param.mod/v6/paction"
-	"github.com/nickwells/param.mod/v6/param"
-	"github.com/nickwells/param.mod/v6/psetter"
+	"github.com/nickwells/param.mod/v7/paction"
+	"github.com/nickwells/param.mod/v7/param"
+	"github.com/nickwells/param.mod/v7/psetter"
 )
 
 const (
@@ -77,7 +77,7 @@ func addParams(prog *Prog) param.PSetOptFunc {
 				"this gives the list of types to be applied to the schema",
 				param.AltNames("type"), param.PostAction(countSchema),
 				param.PostAction(
-					func(_ location.L, _ *param.ByName, _ []string) error {
+					func(_ location.L, _ *param.BaseParam, _ []string) error {
 						s := prog.schemas[dbtcommon.SchemaSubDirTypes]
 						if s == nil {
 							s = &schema{}
@@ -108,7 +108,7 @@ func addParams(prog *Prog) param.PSetOptFunc {
 				param.AltNames("table", "tbl"),
 				param.PostAction(countSchema),
 				param.PostAction(
-					func(_ location.L, _ *param.ByName, _ []string) error {
+					func(_ location.L, _ *param.BaseParam, _ []string) error {
 						s := prog.schemas[dbtcommon.SchemaSubDirTables]
 						if s == nil {
 							s = &schema{}
@@ -139,7 +139,7 @@ func addParams(prog *Prog) param.PSetOptFunc {
 				param.AltNames("func"),
 				param.PostAction(countSchema),
 				param.PostAction(
-					func(_ location.L, _ *param.ByName, _ []string) error {
+					func(_ location.L, _ *param.BaseParam, _ []string) error {
 						s := prog.schemas[dbtcommon.SchemaSubDirFuncs]
 						if s == nil {
 							s = &schema{}
@@ -170,7 +170,7 @@ func addParams(prog *Prog) param.PSetOptFunc {
 				param.AltNames("trigger"),
 				param.PostAction(countSchema),
 				param.PostAction(
-					func(_ location.L, _ *param.ByName, _ []string) error {
+					func(_ location.L, _ *param.BaseParam, _ []string) error {
 						s := prog.schemas[dbtcommon.SchemaSubDirTriggers]
 						if s == nil {
 							s = &schema{}
