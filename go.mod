@@ -9,15 +9,15 @@ require (
 	github.com/nickwells/fileparse.mod v1.1.38
 	github.com/nickwells/location.mod v1.2.35
 	github.com/nickwells/macros.mod v1.1.13
-	github.com/nickwells/param.mod/v7 v7.1.0
+	github.com/nickwells/param.mod/v7 v7.1.2
 	github.com/nickwells/testhelper.mod/v2 v2.5.0
-	github.com/nickwells/verbose.mod v1.1.18
-	github.com/nickwells/versionparams.mod v1.2.22
+	github.com/nickwells/verbose.mod v1.1.19
+	github.com/nickwells/versionparams.mod v1.2.23
 	github.com/nickwells/xdg.mod v1.0.11
 )
 
 require (
-	github.com/nickwells/col.mod/v6 v6.0.3 // indirect
+	github.com/nickwells/col.mod/v6 v6.1.0 // indirect
 	github.com/nickwells/strdist.mod/v2 v2.1.1 // indirect
 	github.com/nickwells/timer.mod v1.2.7 // indirect
 )
