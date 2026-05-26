@@ -9,10 +9,10 @@ require (
 	github.com/nickwells/fileparse.mod v1.1.39
 	github.com/nickwells/location.mod v1.2.37
 	github.com/nickwells/macros.mod v1.1.14
-	github.com/nickwells/param.mod/v7 v7.2.3
+	github.com/nickwells/param.mod/v7 v7.2.4
 	github.com/nickwells/testhelper.mod/v2 v2.6.1
-	github.com/nickwells/verbose.mod v1.1.23
-	github.com/nickwells/versionparams.mod v1.2.27
+	github.com/nickwells/verbose.mod v1.1.24
+	github.com/nickwells/versionparams.mod v1.2.28
 	github.com/nickwells/xdg.mod v1.0.12
 )
 
